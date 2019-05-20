@@ -1,0 +1,12 @@
+{
+  "name": "react-native-form",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./src/index.js",
+  "peerDependencies": {
+    "react": "^16.8.3",
+    "react-native": "^0.59.8",
+    "react-native-elements": "^1.1.0"
+  },
+  "files": [ "src" ]
+}
