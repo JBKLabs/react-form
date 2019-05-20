@@ -3,7 +3,11 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    
+    "android": "npm-run-all --parallel watch start:android",
+    "ios": "npm-run-all --parallel watch start:ios",
+    "start:android": "react-native run-android",
+    "start:ios": "react-native run-ios",
+    "watch": "gulp"
   },
   "dependencies": {
     "react": "16.8.3",
@@ -14,7 +18,9 @@
   "devDependencies": {
     "@babel/core": "7.4.4",
     "@babel/runtime": "7.4.4",
-    "get-dev-paths": "0.1.1",
-    "metro-react-native-babel-preset": "0.54.1"
+    "gulp": "4.0.2",
+    "gulp-babel": "8.0.0",
+    "metro-react-native-babel-preset": "0.54.1",
+    "npm-run-all": "4.1.5"
   }
 }

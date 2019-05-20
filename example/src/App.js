@@ -2,8 +2,12 @@ import React from 'react';
 import { Form, TextInput } from 'react-native-form';
 
 const App = () => (
-  <Form>
+  <Form
+    onFormValuesChange={values => console.log(values)}
+  >
     <TextInput name="firstName" />
+    <TextInput name="lastName" />
+    <TextInput name="email" />
   </Form>
 );
 

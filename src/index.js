@@ -1,8 +1,2 @@
-import { Form, withFormHandling } from './Form';
-import TextInput from './TextInput';
-
-export default {
-  Form,
-  withFormHandling,
-  TextInput,
-};
+export { Form, withFormHandling } from './Form';
+export { default as TextInput } from './TextInput';
