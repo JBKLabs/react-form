@@ -4,11 +4,6 @@ import PropTypes from 'prop-types';
 export const FormContext = React.createContext();
 
 class Form extends Component {
-  state = {
-    formValues: {},
-    formValidity: {},
-  };
-
   handleValue = ({ name, value }) => {
     const { onFormValuesChange } = this.props;
     const { formValues: oldValues } = this.state;
@@ -29,19 +24,18 @@ class Form extends Component {
     this.setState({ formValidity });
   }
 
+  state = {
+    formValues: {},
+    formValidity: {},
+    handleValid: this.handleValid,
+    handleValue: this.handleValue,
+  };
+
   render() {
     const { children } = this.props;
-    const { formValues, formValidity } = this.state;
 
     return (
-      <FormContext.Provider
-        value={{ 
-          formValues,
-          formValidity,
-          handleValue: this.handleValue,
-          handleValid: this.handleValid,
-        }}
-      >
+      <FormContext.Provider value={this.state}>
         {children}
       </FormContext.Provider>
     )

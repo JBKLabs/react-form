@@ -24,12 +24,9 @@ class App extends Component {
         onFormValuesChange={values => console.log(values)}
         onFormValidityChange={validity => console.log(validity)}
       >
-        <TextInput name="firstName" regex="^brian$" containerStyle={containerStyle}/>
-        <TextInput name="lastName" optional containerStyle={containerStyle} customValidation={value => value.length > 4}/>
-        <TextInput containerStyle={containerStyle} defaultValue={defaultValue} name="email" customValidation={(value) => {
-          if (value !== 'wow') throw new ValidationError('no');
-          return true;
-        }}/>
+        <TextInput name="firstName" />
+        <TextInput name="lastName" />
+        <TextInput name="email" />
       </Form>
     );
   }
