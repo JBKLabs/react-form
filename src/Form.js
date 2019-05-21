@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-const FormContext = React.createContext();
+export const FormContext = React.createContext();
 
 class Form extends Component {
   state = {
     formValues: {},
+    formValidity: {},
   };
 
   handleValue = ({ name, value }) => {
@@ -14,22 +15,31 @@ class Form extends Component {
 
     const formValues = { ...oldValues, [name]: value };
 
-    if (onFormValuesChange) {
-      onFormValuesChange(formValues);
-    }
-
+    onFormValuesChange(formValues);
     this.setState({ formValues });
+  }
+
+  handleValid = ({ name, valid }) => {
+    const { onFormValidityChange } = this.props;
+    const { formValidity: oldValidity } = this.state;
+
+    const formValidity = { ...oldValidity, [name]: valid };
+
+    onFormValidityChange(formValidity);
+    this.setState({ formValidity });
   }
 
   render() {
     const { children } = this.props;
-    const { formValues } = this.state;
+    const { formValues, formValidity } = this.state;
 
     return (
       <FormContext.Provider
         value={{ 
           formValues,
+          formValidity,
           handleValue: this.handleValue,
+          handleValid: this.handleValid,
         }}
       >
         {children}
@@ -41,36 +51,12 @@ class Form extends Component {
 Form.propTypes = {
   children: PropTypes.node,
   onFormValuesChange: PropTypes.func,
+  onFormValidityChange: PropTypes.func,
 };
 
 Form.defaultProps = {
   onFormValuesChange: () => {},
+  onFormValidityChange: () => {},
 };
 
-const withFormHandling = (FormInput) => {
-  const WrappedComponent = ({ name, ...props }) => (
-    <FormContext.Consumer>
-      {
-        context => (
-          <FormInput
-            {...props}
-            name={name}
-            setFormInputValue={value => context.handleValue({ name, value })}
-            value={context.formValues[name] || ''}
-          />
-        )
-      }
-    </FormContext.Consumer>
-  );
-
-  WrappedComponent.propTypes = {
-    name: PropTypes.string,
-  }
-
-  return WrappedComponent;
-}
-
-export {
-  Form,
-  withFormHandling,
-};
+export default Form;
