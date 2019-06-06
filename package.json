@@ -1,5 +1,5 @@
 {
-  "name": "react-native-form",
+  "name": "@jbk/react-native-form",
   "version": "0.0.1",
   "private": true,
   "main": "./src/index.js",
