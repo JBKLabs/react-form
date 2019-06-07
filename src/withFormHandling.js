@@ -7,59 +7,31 @@ const withFormHandling = (FormInput) => {
   class WrappedComponent extends Component {
     static contextType = FormContext;
 
-    componentDidMount() {
-      const { defaultValue, defaultValidity, optional } = this.props;
-
-      const value = defaultValue || '';
-      const valid = defaultValidity || optional;
-
-      this.setFormInputValue(value);
-      this.setFormInputValidity(valid);
-    }
-
-    componentWillReceiveProps(nextProps) {
-      const { defaultValue: oldValue, defaultValidity: oldValidity } = this.props;
-      const { defaultValue: newValue, defaultValidity: newValidity } = nextProps;
-
-      if (oldValue !== newValue) {
-        this.setFormInputValue(newValue);
-      }
-
-      if (oldValidity !== newValidity) {
-        this.setFormInputValidity(newValidity);
-      }
-    }
-
-    setFormInputValue = (value) => {
+    setFormInputValue = value => {
       const { name } = this.props;
       const { handleValue } = this.context;
       handleValue({ name, value });
     }
 
-    setFormInputValidity = (valid) => {
+    setFormInputValidity = valid => {
       const { name } = this.props;
       const { handleValid } = this.context;
       handleValid({ name, valid });
     }
 
     render() {
-      const { name, ...props } = this.props;
+      const { name, ...remaining } = this.props;
+      const { formValidity, formValues } = this.context;
 
       return (
-        <FormContext.Consumer>
-          {
-            context =>(
-              <FormInput
-                name={name}
-                setFormInputValue={this.setFormInputValue}
-                setFormInputValidity={this.setFormInputValidity}
-                value={context.formValues[name] || ''}
-                valid={context.formValidity[name]}
-                {...props}
-              />
-            )
-          }
-        </FormContext.Consumer>
+        <FormInput
+          name={name}
+          setFormInputValue={this.setFormInputValue}
+          setFormInputValidity={this.setFormInputValidity}
+          value={formValues[name]}
+          valid={formValidity[name]}
+          {...remaining}
+        />
       );
     }
   }
@@ -67,8 +39,6 @@ const withFormHandling = (FormInput) => {
   WrappedComponent.propTypes = {
     name: PropTypes.string,
     optional: PropTypes.bool,
-    defaultValue: PropTypes.string,
-    defaultValidity: PropTypes.bool,
   };
 
   WrappedComponent.defaultProps = {

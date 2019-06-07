@@ -47,8 +47,9 @@ class TextInput extends Component {
   }
 
   computeStyles = (style) => {
+    const { error } = this.state;
     return typeof style === 'function'
-      ? style(this.props)
+      ? style({ ...this.props, error })
       : style;
   }
 

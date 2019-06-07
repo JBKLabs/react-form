@@ -4,32 +4,48 @@ import PropTypes from 'prop-types';
 export const FormContext = React.createContext();
 
 class Form extends Component {
-  handleValue = ({ name, value }) => {
-    const { onFormValuesChange } = this.props;
-    const { formValues: oldValues } = this.state;
-
-    const formValues = { ...oldValues, [name]: value };
-
-    onFormValuesChange(formValues);
-    this.setState({ formValues });
-  }
-
-  handleValid = ({ name, valid }) => {
-    const { onFormValidityChange } = this.props;
-    const { formValidity: oldValidity } = this.state;
-
-    const formValidity = { ...oldValidity, [name]: valid };
-
-    onFormValidityChange(formValidity);
-    this.setState({ formValidity });
-  }
-
   state = {
     formValues: {},
+    formDefaultValues: {},
     formValidity: {},
-    handleValid: this.handleValid,
-    handleValue: this.handleValue,
+    formDefaultValidity: {},
+    handleValid: ({ name, valid }) => {
+      const { onFormValidityChange } = this.props;
+      const { formValidity: oldValidity } = this.state;
+  
+      const formValidity = { ...oldValidity, [name]: valid };
+  
+      onFormValidityChange(formValidity);
+      this.setState({ formValidity });
+    },
+    handleValue: ({ name, value }) => {
+      const { onFormValuesChange } = this.props;
+      const { formValues: oldValues } = this.state;
+  
+      const formValues = { ...oldValues, [name]: value };
+  
+      onFormValuesChange(formValues);
+      this.setState({ formValues });
+    },
   };
+
+  componentWillReceiveProps(nextProps) {
+    const { defaultValues: prevDefaults } = this.props;
+    const { formValues: oldValues, formValidity: oldValidity } = this.state;
+    const { defaultValues: nextDefaults } = nextProps;
+
+    if (prevDefaults !== nextDefaults) {
+      const formValues = { ...oldValues, ...nextDefaults };
+      const formValidity = { ...oldValidity };
+
+      Object.entries(nextDefaults).forEach(([key,value]) => {
+        if (value) {
+          formValidity[key] = true;
+        }
+      });
+      this.setState({ formValues, formValidity });
+    }
+  }
 
   render() {
     const { children } = this.props;
@@ -46,6 +62,7 @@ Form.propTypes = {
   children: PropTypes.node,
   onFormValuesChange: PropTypes.func,
   onFormValidityChange: PropTypes.func,
+  defaultValues: PropTypes.shape({})
 };
 
 Form.defaultProps = {
