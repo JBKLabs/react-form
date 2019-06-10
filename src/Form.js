@@ -10,22 +10,14 @@ class Form extends Component {
     formValidity: {},
     formDefaultValidity: {},
     handleValid: ({ name, valid }) => {
-      const { onFormValidityChange } = this.props;
       const { formValidity: oldValidity } = this.state;
-  
       const formValidity = { ...oldValidity, [name]: valid };
-  
-      onFormValidityChange(formValidity);
-      this.setState({ formValidity });
+      this.formValidityHandler(formValidity);
     },
     handleValue: ({ name, value }) => {
-      const { onFormValuesChange } = this.props;
       const { formValues: oldValues } = this.state;
-  
       const formValues = { ...oldValues, [name]: value };
-  
-      onFormValuesChange(formValues);
-      this.setState({ formValues });
+      this.formValuesHandler(formValues);
     },
   };
 
@@ -35,16 +27,42 @@ class Form extends Component {
     const { defaultValues: nextDefaults } = nextProps;
 
     if (prevDefaults !== nextDefaults) {
-      const formValues = { ...oldValues, ...nextDefaults };
+      const formValues = { ...oldValues };
       const formValidity = { ...oldValidity };
 
       Object.entries(nextDefaults).forEach(([key,value]) => {
-        if (value) {
+        if (typeof value === 'object') {
+          const [_value, _valid] = value;
+          formValues[key] = _value;
+          formValidity[key] = _valid;
+        } else {
+          formValues[key] = value;
           formValidity[key] = true;
-        }
+        }      
       });
-      this.setState({ formValues, formValidity });
+      this.formValuesHandler(formValues);
+      this.formValidityHandler(formValidity);
     }
+  }
+
+  formValuesHandler = (formValues) => {
+    const { onFormValuesChange } = this.props;
+    this.setState({ formValues }, () => onFormValuesChange(formValues));
+  }
+
+  formValidityHandler = (formValidity) => {
+    const { onFormValidityChange } = this.props;
+    const formValid = Object
+      .values(formValidity)
+      .reduce((cur, next) => cur && next, true);
+
+    const numFields = Object.keys(formValidity).length;
+
+    this.setState({ formValidity }, () => onFormValidityChange({
+      fields: formValidity,
+      valid: formValid,
+      count: numFields,
+    }));
   }
 
   render() {

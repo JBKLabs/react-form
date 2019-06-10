@@ -20,29 +20,51 @@ const withFormHandling = (FormInput) => {
     }
 
     render() {
-      const { name, ...remaining } = this.props;
-      const { formValidity, formValues } = this.context;
-
-      return (
-        <FormInput
-          name={name}
-          setFormInputValue={this.setFormInputValue}
-          setFormInputValidity={this.setFormInputValidity}
-          value={formValues[name]}
-          valid={formValidity[name]}
-          {...remaining}
-        />
-      );
+      const { 
+        name, value: injectedValue, valid: injectedValid, 
+        setFormInputValue: injectedValueChange, 
+        setFormInputValidity: injectedValidityChange, 
+        ...remaining 
+      } = this.props;
+      
+      return this.context
+        ? (
+          <FormInput
+            name={name}
+            setFormInputValue={this.setFormInputValue}
+            setFormInputValidity={this.setFormInputValidity}
+            value={this.context.formValues[name]}
+            valid={this.context.formValidity[name]}
+            {...remaining}
+          />
+        ) : (
+          <FormInput
+            name={name}
+            setFormInputValue={injectedValueChange}
+            setFormInputValidity={injectedValidityChange}
+            value={injectedValue}
+            valid={injectedValid}
+            {...remaining}
+          />
+        )
     }
   }
 
   WrappedComponent.propTypes = {
     name: PropTypes.string,
     optional: PropTypes.bool,
+    value: PropTypes.any,
+    valid: PropTypes.bool,
+    setFormInputValue: PropTypes.func,
+    setFormInputValidity: PropTypes.func,
   };
 
   WrappedComponent.defaultProps = {
     optional: false,
+    value: '',
+    valid: true,
+    setFormInputValue: () => {},
+    setFormInputValidity: () => {},
   };
 
   return WrappedComponent;
