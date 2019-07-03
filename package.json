@@ -1,12 +1,29 @@
 {
-  "name": "@jbk/react-native-form",
-  "version": "0.0.1",
+  "name": "@jbk/react-form",
+  "version": "0.1.0",
+  "description": "Form utilities for react web and native projects",
+  "keywords": [
+    "@jbk",
+    "react",
+    "form"
+  ],
+  "homepage": "https://github.com/JBKLabs/react-form",
+  "bugs": {
+    "url": "https://github.com/JBKLabs/react-form/issues"
+  },
   "license": "Apache-2.0",
+  "authors": [
+    "Brian Maule (https://github.com/mauleb)"
+  ],
+  "files": [ "src" ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JBKLabs/react-form.git"
+  },
   "main": "./src/index.js",
   "peerDependencies": {
     "react": "^16.8.3",
     "react-native": "^0.59.8",
     "react-native-elements": "^1.1.0"
-  },
-  "files": [ "src" ]
+  }
 }
