@@ -25,3 +25,7 @@ Let's make forms a little less painful shall we?
 ## API
 
 TODO
+
+## Licensing
+
+This package is licensed under Apache License, Version 2.0. See [LICENSE](./LICENSE) for the full license text.
