@@ -25,7 +25,3 @@ Let's make forms a little less painful shall we?
 ## API
 
 TODO
-
-## Contributors
-
-- [Brian Maule](brian.maule@jbknowledge.com) - JBKLabs Software Developer
