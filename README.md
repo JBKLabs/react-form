@@ -1,4 +1,4 @@
-# React Native Form
+# React Form
 
 Let's make forms a little less painful shall we?
 
