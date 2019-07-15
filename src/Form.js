@@ -4,22 +4,26 @@ import PropTypes from 'prop-types';
 export const FormContext = React.createContext();
 
 class Form extends Component {
-  state = {
-    formValues: {},
-    formDefaultValues: {},
-    formValidity: {},
-    formDefaultValidity: {},
-    handleValid: ({ name, valid }) => {
-      const { formValidity: oldValidity } = this.state;
-      const formValidity = { ...oldValidity, [name]: valid };
-      this.formValidityHandler(formValidity);
-    },
-    handleValue: ({ name, value }) => {
-      const { formValues: oldValues } = this.state;
-      const formValues = { ...oldValues, [name]: value };
-      this.formValuesHandler(formValues);
-    },
-  };
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      formValues: {},
+      formDefaultValues: {},
+      formValidity: {},
+      formDefaultValidity: {},
+      handleValid: ({ name, valid }) => {
+        const { formValidity: oldValidity } = this.state;
+        const formValidity = { ...oldValidity, [name]: valid };
+        this.formValidityHandler(formValidity);
+      },
+      handleValue: ({ name, value }) => {
+        const { formValues: oldValues } = this.state;
+        const formValues = { ...oldValues, [name]: value };
+        this.formValuesHandler(formValues);
+      },
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     const { defaultValues: prevDefaults } = this.props;

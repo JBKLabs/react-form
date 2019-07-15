@@ -15,6 +15,25 @@ Let's make forms a little less painful shall we?
 
 ## Running Locally
 
+### React
+
+**In one terminal:**
+* `npm i`
+* `npm start`
+
+To compile and watch changes to `src/*`
+
+**In a second terminal:**
+* `cd examples/react-web`
+* `npm i`
+* `npm start`
+
+To spin up the example react project on localhost
+
+### React Native
+
+TODO: Update
+
 * `cd example`
 * `npm i`
 * `npm run watch` in one terminal
