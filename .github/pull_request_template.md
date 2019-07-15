@@ -1,4 +1,4 @@
-For issue #<issue-number>
+Closes #<issue-number>
 
 ## Changes
 
