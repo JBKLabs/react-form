@@ -15,16 +15,16 @@ Let's make forms a little less painful shall we?
 
 ## Running Locally
 
-### React
-
 **In one terminal:**
 * `npm i`
 * `npm start`
 
+### React Web
+
 To compile and watch changes to `src/*`
 
 **In a second terminal:**
-* `cd examples/react-web`
+* `cd examples/web`
 * `npm i`
 * `npm start`
 
@@ -32,12 +32,12 @@ To spin up the example react project on localhost
 
 ### React Native
 
-TODO: Update
+* **ANDROID**: Open and sync the project in Android Studio
 
-* `cd example`
+**In a second terminal:**
+* `cd examples/native`
 * `npm i`
-* `npm run watch` in one terminal
-* `react-native run-<platform>` in a second terminal
+* `react-native run-<platform>`
 
 **NOTE**: Hot reloading is only partially implemented at this time. You may need to reload from your device to experience functional changes.
 
