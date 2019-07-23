@@ -13,34 +13,6 @@ Let's make forms a little less painful shall we?
 </Form>
 ```
 
-## Running Locally
-
-**In one terminal:**
-* `npm i`
-* `npm start`
-
-### React Web
-
-To compile and watch changes to `src/*`
-
-**In a second terminal:**
-* `cd examples/web`
-* `npm i`
-* `npm start`
-
-To spin up the example react project on localhost
-
-### React Native
-
-* **ANDROID**: Open and sync the project in Android Studio
-
-**In a second terminal:**
-* `cd examples/native`
-* `npm i`
-* `react-native run-<platform>`
-
-**NOTE**: Hot reloading is only partially implemented at this time. You may need to reload from your device to experience functional changes.
-
 ## API
 
 TODO
