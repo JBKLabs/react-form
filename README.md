@@ -15,7 +15,7 @@ Let's make forms a little less painful shall we?
 
 ## Running Locally
 
-### React
+### Web
 
 **In one terminal:**
 * `npm i`
@@ -24,7 +24,7 @@ Let's make forms a little less painful shall we?
 To compile and watch changes to `src/*`
 
 **In a second terminal:**
-* `cd examples/react-web`
+* `cd examples/web`
 * `npm i`
 * `npm start`
 
