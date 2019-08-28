@@ -25,7 +25,9 @@ const Input = ({
 const onFormValueChange = (value, { regex }) => {
   if (regex && !value.match(regex)) {
     throw new ValidationError('Invalid pattern.')
-  } else if (!regex && value !== 'hello') {
+  } else if (!regex && value === 'hell') {
+    throw new ValidationError('HEY!');
+  }else if (!regex && value !== 'hello') {
     throw new ValidationError('Too Rude.');
   }
   return value;
