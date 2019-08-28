@@ -1,9 +1,15 @@
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
 export const FormContext = React.createContext();
 
-const Form = ({ onSubmit, children }) => {
+const Form = ({ 
+  onSubmit, 
+  children, 
+  onChangeFormValid,
+  ...remainingProps
+}) => {
   const [form, setForm] = useState({
+    formValid: false,
     values: {},
     errors: {},
   });
@@ -18,23 +24,42 @@ const Form = ({ onSubmit, children }) => {
         [name]: value 
       } 
     })),
-    setError: (name, error) => setForm(prev => ({
-      ...prev, 
-      errors: { 
-        ...prev.errors, 
-        [name]: error 
-      } 
-    })),
+    setError: (name, error) => setForm(prev => {
+      const values = prev.values;
+      const errors = {
+        ...prev.errors,
+        [name]: error
+      };
+      const formValid = Object
+        .values(errors)
+        .reduce((valid, nextError) => valid && nextError === null, true);
+      
+
+      console.log(errors);
+
+      return {
+        values,
+        errors,
+        formValid
+      };
+    }),
   }), [form]);
 
   const handleOnSubmit = useCallback((e) => {
     e.preventDefault();
-    onSubmit(form);
+    const { formValid, values } = form;
+    onSubmit({ formValid, values });
   },[form]);
+
+  useEffect(() => {
+    if (onChangeFormValid) {
+      onChangeFormValid(form.formValid);
+    }
+  }, [form.formValid]);
 
   return (
     <FormContext.Provider value={ctx}>
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit} {...remainingProps}>
         {children}
       </form>
     </FormContext.Provider>

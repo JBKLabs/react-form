@@ -7,17 +7,12 @@ const withFormHandling = (FormInput, onFormValueChange=v => v) => ({
   defaultValue='',
   ...remainingProps
 }) => {
-  const [updated, setUpdated] = useState(false);
   const { 
     values, setValue,
     errors, setError,
   } = useContext(FormContext);
 
   const setNamedValue = useCallback((value) => {
-    if (!updated) {
-      setUpdated(true);
-    }
-
     let processedValue = value;
     try {
       processedValue = onFormValueChange(value, remainingProps);  
@@ -27,16 +22,16 @@ const withFormHandling = (FormInput, onFormValueChange=v => v) => ({
       setError(name, message);
     }
     setValue(name, processedValue);
-  }, [name, updated]);
+  }, [name]);
 
   useEffect(() => {
-    setValue(name, defaultValue);
+    setNamedValue(defaultValue);
   }, [name, defaultValue]);
 
   return (
     <FormInput 
       value={values[name] || ''}
-      error={updated ? errors[name] : null}
+      error={errors[name] || null}
       setValue={setNamedValue}
       name={name}
       {...remainingProps} 

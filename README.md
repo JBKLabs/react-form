@@ -4,12 +4,18 @@ Let's make forms a little less painful shall we?
 
 ```js
 <Form
-  onFormValuesChange={values => console.log(values)} // { firstName: '', lastName: '', email: '' }
-  onFormValidityChange={validity => console.log(validity)} // { firstName: false, lastName: false, email: false }
+  onSubmit={({ values, formValid }) => {
+    if (formValid) {
+      makeApiCall(values);
+    }
+  }}
 >
-  <TextInput name="firstName" />
-  <TextInput name="lastName" />
-  <TextInput name="email" />
+  <Input name="firstName" />
+  <Input name="lastName" />
+  <Input name="email" />
+  <button type="submit">
+    Submit
+  </button>
 </Form>
 ```
 
@@ -32,14 +38,7 @@ To spin up the example react project on localhost
 
 ### React Native
 
-TODO: Update
-
-* `cd example`
-* `npm i`
-* `npm run watch` in one terminal
-* `react-native run-<platform>` in a second terminal
-
-**NOTE**: Hot reloading is only partially implemented at this time. You may need to reload from your device to experience functional changes.
+TODO
 
 ## API
 

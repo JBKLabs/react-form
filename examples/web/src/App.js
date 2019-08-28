@@ -35,13 +35,15 @@ const App = () => {
   return (
     <div style={styles.wrapper}>
       <div style={styles.formWrapper}>
-        <Form onSubmit={values => console.log(values)} >
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Input name="firstName" defaultValue={def} />
-            <Input name="lastName" />
-            <Input name="phone" regex="^\d{7}$" />
-            <button type="submit">wow</button>
-          </div>
+        <Form 
+          onSubmit={values => console.log(values)} 
+          onChangeFormValid={formValid => console.log({ formValid })}
+          style={{ display: 'flex', flexDirection: 'column' }}
+        >
+          <Input name="firstName" defaultValue={def} />
+          <Input name="lastName" regex=".*" />
+          <Input name="phone" regex="^\d{7}$" />
+          <button type="submit">wow</button>
         </Form>
       </div>
     </div>
