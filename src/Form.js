@@ -37,8 +37,6 @@ const Form = ({
         .filter(v => v !== undefined)
         .reduce((valid, nextError) => valid && nextError === null, true);
 
-      console.log(errors);
-
       return {
         values,
         errors,

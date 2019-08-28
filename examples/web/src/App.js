@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from 'react';
+import React,{ Component } from 'react';
 import { Form } from '@jbk/react-form';
 
 import Input from './Input';
@@ -25,30 +25,27 @@ const styles = {
   }
 };
 
-const App = () => {
-  const [show,setShow] = useState(true);
-  useEffect(() => {
-    setTimeout(() => {
-      setShow(false);
-    }, 5000);
-  }, []);
-  return (
-    <div style={styles.wrapper}>
-      <div style={styles.formWrapper}>
-        <Form 
-          onSubmit={values => console.log(values)} 
-          onChangeFormValid={formValid => console.log({ formValid })}
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
-          <Input name="firstName" />
-          {show && <Input name="lastName" regex=".*" />}
-          <Input name="user.phone" regex="^\d{7}$" />
-          <Input name="user.email" regex="^\d{7}$" />
-          <button type="submit">wow</button>
-        </Form>
+class App extends Component {
+  onSubmit = values => console.log(values);
+
+  render() {
+    return (
+      <div style={styles.wrapper}>
+        <div style={styles.formWrapper}>
+          <Form 
+            onSubmit={this.onSubmit} 
+            style={{ display: 'flex', flexDirection: 'column' }}
+          >
+            <Input name="firstName" />
+            <Input name="lastName" regex=".*" />
+            <Input name="user.phone" regex="^\d{7}$" />
+            <Input name="user.email" regex="^\d{7}$" />
+            <button type="submit">wow</button>
+          </Form>
+        </div>
       </div>
-    </div>
-  );
+    );
+  }
 }
 
 export default App;
