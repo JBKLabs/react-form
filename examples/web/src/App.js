@@ -42,7 +42,8 @@ const App = () => {
         >
           <Input name="firstName" />
           {show && <Input name="lastName" regex=".*" />}
-          <Input name="phone" regex="^\d{7}$" />
+          <Input name="user.phone" regex="^\d{7}$" />
+          <Input name="user.email" regex="^\d{7}$" />
           <button type="submit">wow</button>
         </Form>
       </div>

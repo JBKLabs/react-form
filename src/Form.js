@@ -1,5 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
+import transposeKeys from './transposeKeys';
+
 export const FormContext = React.createContext();
 
 const Form = ({ 
@@ -47,11 +49,13 @@ const Form = ({
 
   const handleOnSubmit = useCallback((e) => {
     e.preventDefault();
-    const { formValid, values } = form;
+    const { formValid, values: rawValues } = form;
 
     Object
-      .keys(values)
-      .forEach(k => values[k] === undefined && delete values[k]);
+      .keys(rawValues)
+      .forEach(k => rawValues[k] === undefined && delete rawValues[k]);
+
+    const values = transposeKeys(rawValues);
 
     onSubmit({ formValid, values });
   },[form]);
