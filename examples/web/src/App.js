@@ -26,11 +26,11 @@ const styles = {
 };
 
 const App = () => {
-  const [def,setDef] = useState('');
+  const [show,setShow] = useState(true);
   useEffect(() => {
     setTimeout(() => {
-      setDef('wow');
-    }, 3000);
+      setShow(false);
+    }, 5000);
   }, []);
   return (
     <div style={styles.wrapper}>
@@ -40,8 +40,8 @@ const App = () => {
           onChangeFormValid={formValid => console.log({ formValid })}
           style={{ display: 'flex', flexDirection: 'column' }}
         >
-          <Input name="firstName" defaultValue={def} />
-          <Input name="lastName" regex=".*" />
+          <Input name="firstName" />
+          {show && <Input name="lastName" regex=".*" />}
           <Input name="phone" regex="^\d{7}$" />
           <button type="submit">wow</button>
         </Form>

@@ -32,8 +32,8 @@ const Form = ({
       };
       const formValid = Object
         .values(errors)
+        .filter(v => v !== undefined)
         .reduce((valid, nextError) => valid && nextError === null, true);
-      
 
       console.log(errors);
 
@@ -48,6 +48,11 @@ const Form = ({
   const handleOnSubmit = useCallback((e) => {
     e.preventDefault();
     const { formValid, values } = form;
+
+    Object
+      .keys(values)
+      .forEach(k => values[k] === undefined && delete values[k]);
+
     onSubmit({ formValid, values });
   },[form]);
 
