@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, useState } from 'react';
+import React, { useEffect, useContext, useCallback } from 'react';
 
 import { FormContext } from './Form';
 
@@ -13,15 +13,15 @@ const withFormHandling = (FormInput, onFormValueChange=v => v) => ({
   } = useContext(FormContext);
 
   const setNamedValue = useCallback((value) => {
-    let processedValue = value;
     try {
-      processedValue = onFormValueChange(value, remainingProps);  
+      onFormValueChange(value, remainingProps);  
       setError(name, null);
     } catch (e) {
       const message = e.displayText || e;
       setError(name, message);
     }
-    setValue(name, processedValue);
+
+    setValue(name, value);
   }, [name]);
 
   useEffect(() => {
