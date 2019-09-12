@@ -8,13 +8,7 @@ export default {
     'index': 'src/index.js',
     'native/index': 'src/native/index.js'
   },
-  // experimentalCodeSplitting: true,
   output: [
-    {
-      dir: 'dist',
-      format: 'cjs',
-      sourcemap: true
-    },
     {
       dir: 'dist',
       format: 'es',

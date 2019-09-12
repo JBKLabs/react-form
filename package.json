@@ -25,6 +25,10 @@
   "files": [
     "dist"
   ],
+  "exports": {
+    "./": "./dist/",
+    "./native/": "./dist/native/"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/JBKLabs/react-form.git"
