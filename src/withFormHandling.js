@@ -1,6 +1,6 @@
 import React, { useEffect, useContext, useCallback } from 'react';
 
-import { FormContext } from './Form';
+import FormContext from './FormContext';
 
 const withFormHandling = (FormInput, onFormValueChange=v => v) => ({
   name,

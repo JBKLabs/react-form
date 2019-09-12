@@ -3,18 +3,20 @@ import commonjs from 'rollup-plugin-commonjs';
 import external from 'rollup-plugin-peer-deps-external';
 import resolve from 'rollup-plugin-node-resolve';
 
-import pkg from './package.json';
-
 export default {
-  input: 'src/index.js',
+  input: {
+    'index': 'src/index.js',
+    'native/index': 'src/native/index.js'
+  },
+  // experimentalCodeSplitting: true,
   output: [
     {
-      file: pkg.main,
+      dir: 'dist',
       format: 'cjs',
       sourcemap: true
     },
     {
-      file: pkg.module,
+      dir: 'dist',
       format: 'es',
       sourcemap: true
     }

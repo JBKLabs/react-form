@@ -2,6 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 
+import formFactory from '../Form/formFactory';
+
 const FormWrapper = ({ children, onSubmit, ...remainingProps }) => (
   <View {...remainingProps}>
     {children(onSubmit)}
@@ -13,4 +15,4 @@ FormWrapper.propTypes = {
   onSubmit: PropTypes.func,
 };
 
-export default FormWrapper;
+export default formFactory(FormWrapper);
