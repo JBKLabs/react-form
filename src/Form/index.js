@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
-import transposeKeys from './transposeKeys';
+import transposeKeys from '../transposeKeys';
+import FormWrapper from './FormWrapper';
 
 export const FormContext = React.createContext();
 
@@ -66,9 +67,9 @@ const Form = ({
 
   return (
     <FormContext.Provider value={ctx}>
-      <form onSubmit={handleOnSubmit} {...remainingProps}>
+      <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
         {children}
-      </form>
+      </FormWrapper>
     </FormContext.Provider>
   );
 };

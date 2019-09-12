@@ -22,7 +22,7 @@ Let's make forms a little less painful shall we?
 ## Installation
 
 ```bash
-npm install jbklabs/react-form
+npm install jbklabs/react-form#0.1.0
 ```
 
 ## API
