@@ -7,12 +7,9 @@ const Input = ({
   setValue,
 }) => (
   <TextInput
-    style={{ height: 40, color: 'black' }}
     onChangeText={setValue}
     value={value}
   />
 );
 
-const onFormChange = () => {};
-
-export default withFormHandling(Input, onFormChange);
+export default withFormHandling(Input);

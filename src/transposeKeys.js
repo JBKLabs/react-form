@@ -12,7 +12,7 @@ const expand = (obj, keys, value) => {
   };
 }
 
-const transposeObject = (raw) => {
+const transposeKeys = (raw) => {
   const transposed = Object
     .keys(raw)
     .reduce((obj, key) => ({
@@ -23,4 +23,4 @@ const transposeObject = (raw) => {
   return transposed;
 };
 
-export default transposeObject;
+export default transposeKeys;

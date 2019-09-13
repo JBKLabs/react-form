@@ -2,7 +2,10 @@ import React, { useEffect, useContext, useCallback } from 'react';
 
 import FormContext from './FormContext';
 
-const withFormHandling = (FormInput, onFormValueChange=v => v) => ({
+const withFormHandling = (
+  FormInput, 
+  onFormValueChange=() => {}
+) => ({
   name,
   defaultValue='',
   ...remainingProps

@@ -29,7 +29,7 @@ npm install jbklabs/react-form#0.1.0
 
 Due to some limitations of `react-native`, form submit events are only supported by the web version of this package at this time. In addition, you should always import from the `native` submodule when developing in `react-native`. For example:
 
-```js
+```jsx
 import { Form, withFormHandling } from '@jbk/react-form'; // This will not work for react-native projects
 
 import { Form, withFormHandling } from '@jbk/react-form/native';
@@ -48,10 +48,10 @@ This library exports the following:
 This HoC will provide `Component` with 3 props:
 
 `value`: The current value for the input  
-`setValue`: A callback function which replace the existing form value.  
+`setValue`: A callback function which replace the existing form value 
 `error`: The current error message associated with the input, or null
 
-```js
+```jsx
 const Input = ({ value, setValue, error }) => (
   <div className="form-group">
     {error && <div className="form-error">{error}</div>}
@@ -68,7 +68,7 @@ export default withFormHandling(Input);
 
 In addition, components wrapped by `withFormHandling` must be provided a `name` prop, i.e.
 
-```js
+```jsx
 <Input name="password" />
 ```
 
@@ -78,7 +78,7 @@ more on this below.
 
 By default, `react-form` does not provide any error handling. The second argument for the HoC `withFormHandling` or `onChange` is how you can declare validation rules for your components. `onChange(value, props)` will be called automatically by `react-form` everytime the provided `setValue` prop is called. The first arg `value` will be the next value while `props` will be all props passed to your wrapped component. This function when called sets the value of `error` on your behalf. Any error thrown by the `onChange` callback you provide will automatically be caught and passed to your component via the `error` prop.
 
-```js
+```jsx
 export default withFormHandling(Input, (value) => {
   throw new Error(); // props.error will be set to the thrown error
 });
@@ -86,7 +86,7 @@ export default withFormHandling(Input, (value) => {
 
 In the event your component has one or more anticipated errors, you can take advantage of the custom `ValidationError` provided by `react-form` as a convenience.
 
-```js
+```jsx
 export default withFormHandling(Input, (value) => {
   if (isNaN(value)) {
     throw new ValidationError('Please enter a number.'); // props.error will be set to the string provided
@@ -96,7 +96,7 @@ export default withFormHandling(Input, (value) => {
 
 In addition to `value`, the `onChange` callback is also provided all component props. This will allow you to achieve validation similar to the following:
 
-```js
+```jsx
 export default withFormHandling(Input, (value, { regex }) => {
   if (regex && !value.match(regex)) {
     throw new ValidationError('Invalid pattern.')
@@ -108,7 +108,7 @@ export default withFormHandling(Input, (value, { regex }) => {
 
 All components which are wrapped by `withFormHandling` are required to define a value for the `name` prop.
 
-```js
+```jsx
 <Input name="password" />
 ```
 
@@ -131,7 +131,7 @@ This requirement serves two purposes:
 
 You can define inputs such as the following:
 
-```js
+```jsx
 <Form>
   <Input name="user.name" />
   <Input name="user.age" />
@@ -143,7 +143,7 @@ You can define inputs such as the following:
 
 All components wrapped by `withFormHandling` must be nested underneath one of `react-form`'s `Form` components like above. Wrapped inputs, however, do not need to be direct children of the `Form` object; the following is also a valid example:
 
-```js
+```jsx
 <Form>
   <div>
     <div>
@@ -161,12 +161,12 @@ This callback function will be called anytime a submit event is fired within the
 
 **NOTE**: this callback is not currently supported for `react-native`, use the `onChange` callback instead.
 
-`formValid`: true or false based on all of the nested inputs `error` prop
-`values`: All form values structured based on wrapped input names.
+`formValid`: true or false based on all of the nested inputs' `error` props.
+`values`: All form values; structure is based on the value of nested inputs' `name` props.
 
 For example, the following form:
 
-```js
+```jsx
 <Form>
   <Input name="nested.value" />
   <Input name="value" />
@@ -175,7 +175,7 @@ For example, the following form:
 
 could call your provided `onSubmit` callback with:
 
-```js
+```json
 {
   formValid: false,
   values: {
@@ -191,10 +191,10 @@ could call your provided `onSubmit` callback with:
 
 This callback function will be called anytime a form value changes.
 
-`formValid`: true or false based on all of the nested inputs `error` prop
-`values`: All form values structured based on wrapped input names.
+`formValid`: true or false based on all of the nested inputs' `error` props.
+`values`: All form values; structure is based on the value of nested inputs' `name` props.
 
-An example of what this might look like can be seen above
+An example of what this might look like can be seen in the `onSubmit` section.
 
 ## Contributors
 
