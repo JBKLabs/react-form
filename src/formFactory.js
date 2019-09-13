@@ -3,8 +3,18 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import transposeKeys from './transposeKeys';
 import FormContext from './FormContext';
 
+const cleanFormValues = (values) => {
+  const cleanedValues = Object
+    .keys(values)
+    .filter(k => values[k] !== undefined)
+    .reduce((obj, key) => ({ ...obj, [key]: values[key]}), {});
+
+  return transposeKeys(cleanedValues);
+};
+
 const formFactory = (FormWrapper) => ({ 
-  onSubmit, 
+  onSubmit,
+  onChange,
   children, 
   onChangeFormValid,
   ...remainingProps
@@ -47,13 +57,7 @@ const formFactory = (FormWrapper) => ({
   const handleOnSubmit = useCallback((e) => {
     e.preventDefault();
     const { formValid, values: rawValues } = form;
-
-    Object
-      .keys(rawValues)
-      .forEach(k => rawValues[k] === undefined && delete rawValues[k]);
-
-    const values = transposeKeys(rawValues);
-
+    const values = cleanFormValues(rawValues);
     onSubmit({ formValid, values });
   },[form]);
 
@@ -62,6 +66,13 @@ const formFactory = (FormWrapper) => ({
       onChangeFormValid(form.formValid);
     }
   }, [form.formValid]);
+
+  useEffect(() => {
+    if (onChange) {
+      const values = cleanFormValues(form.values);
+      onChange(values);
+    }
+  }, [form.values]);
 
   return (
     <FormContext.Provider value={ctx}>

@@ -1,13 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
 
 import formFactory from './formFactory';
 
-const FormWrapper = ({ children, onSubmit, ...remainingProps }) => (
-  <View {...remainingProps}>
-    {children(onSubmit)}
-  </View>
+const FormWrapper = ({ children }) => (
+  <>
+    {children}
+  </>
 );
 
 FormWrapper.propTypes = {
