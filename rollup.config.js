@@ -1,27 +1,49 @@
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
-import external from 'rollup-plugin-peer-deps-external';
 import resolve from 'rollup-plugin-node-resolve';
+import sourceMaps from 'rollup-plugin-sourcemaps';
 
-export default {
-  input: {
-    'index': 'src/index.js',
-    'native/index': 'src/native/index.js'
-  },
+import pkg from './package.json';
+
+const configBase = {
+  external: id => !id.startsWith('\0') && !id.startsWith('.') && !id.startsWith('/'),
+  plugins: [
+    sourceMaps(),
+    resolve(),
+    babel({
+      exclude: ['node_modules/**', '**/node_modules/**'],
+      plugins: ['@babel/plugin-external-helpers'],
+    }),
+    commonjs()
+  ],
+};
+
+const webConfig = {
+  ...configBase,
+  input: './src/index.js',
   output: [
     {
-      dir: 'dist',
+      file: pkg.main,
       format: 'es',
       sourcemap: true
     }
   ],
-  plugins: [
-    external(),
-    babel({
-      exclude: 'node_modules/**',
-      plugins: [ '@babel/external-helpers' ]
-    }),
-    resolve(),
-    commonjs()
-  ]
 }
+
+const nativeConfig = {
+  ...configBase,
+  input: './src/native/index.js',
+  output: [
+    {
+      file: pkg['react-native'],
+      format: 'es',
+      sourcemap: true
+    }
+  ],
+};
+
+
+export default [
+  webConfig,
+  nativeConfig
+];
