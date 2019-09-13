@@ -2,79 +2,86 @@ import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
 import transposeKeys from './transposeKeys';
 import FormContext from './FormContext';
+import useMutableState from './useMutableState';
 
-const cleanFormValues = (values) => {
-  const cleanedValues = Object
+const formatFormValues = (values) => {
+  const formattedValues = Object
     .keys(values)
     .filter(k => values[k] !== undefined)
     .reduce((obj, key) => ({ ...obj, [key]: values[key]}), {});
 
-  return transposeKeys(cleanedValues);
+  return transposeKeys(formattedValues);
 };
 
-const formFactory = (FormWrapper) => ({ 
-  onSubmit,
-  onChange,
-  children, 
-  ...remainingProps
-}) => {
-  const [form, setForm] = useState({
-    formValid: false,
-    values: {},
-    errors: {},
-  });
+const formFactory = (FormWrapper) => {
+  const Form = ({ 
+    onSubmit,
+    onChange,
+    children, 
+    ...remainingProps
+  }) => {
+    const [formValid, setFormValid] = useState(true);
+    const [defaults, setDefaults] = useMutableState({});
+    const [values, setValues] = useMutableState({});
+    const [errors, setErrors] = useMutableState({});
 
-  const ctx = useMemo(() => ({
-    values: form.values,
-    errors: form.errors,
-    setValue: (name, value) => setForm(prev => ({
-      ...prev, 
-      values: { 
-        ...prev.values, 
-        [name]: value 
-      } 
-    })),
-    setError: (name, error) => setForm(prev => {
-      const values = prev.values;
-      const errors = {
-        ...prev.errors,
-        [name]: error
-      };
-      const formValid = Object
+    const updateSubscribers = useCallback((callback) => {
+      const formattedValues = cleanFormValues(values);
+
+      const resetInputs = (keys) => {
+        keys.forEach(k => setValues({ [k]: defaults[k] }));
+        updateSubscribers(onChange);
+      }
+
+      callback({ formValid, values: formattedValues, resetInputs });
+    },[formValid, values, defaults, onChange]);
+
+    const handleOnSubmit = () => updateSubscribers(onSubmit);
+    const handleOnChange = () => updateSubscribers(onChange);
+
+    const updateFormValid = useCallback(() => {
+      const isFormValid = Object
         .values(errors)
         .filter(v => v !== undefined)
         .reduce((valid, nextError) => valid && nextError === null, true);
+      setFormValid(isFormValid);
+      handleOnChange();
+    }, [values, errors]);
 
-      return {
-        values,
-        errors,
-        formValid
-      };
-    }),
-  }), [form]);
+    const ctx = useMemo(() => ({
+      values,
+      errors,
+      setValue: (name, value) => setValues({ [name]: value }, handleOnChange),
+      setError: (name, error) => setErrors({ [name]: error }, updateFormValid),
+      setDefault: (name, defaultValue) => {
+        setDefaults({ [name]: defaultValue }, () => {
+          setValues({ [name]: defaultValue }, handleOnChange);
+        });
+      },
+      removeKey: (name) => {
+        setDefaults({ [name]: undefined }, () => {
+          setValues({ [name]: undefined }, () => {
+            setErrors({ [name]: undefined }, handleOnChange)
+          })
+        })
+      }
+    }), [values, errors]);
+  
+    return (
+      <FormContext.Provider value={ctx}>
+        <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
+          {children}
+        </FormWrapper>
+      </FormContext.Provider>
+    );
+  };
 
-  const handleOnSubmit = useCallback((e) => {
-    e.preventDefault();
-    const { formValid, values: rawValues } = form;
-    const values = cleanFormValues(rawValues);
-    onSubmit({ formValid, values });
-  },[form]);
+  Form.defaultProps = {
+    onSubmit: () => {},
+    onChange: () => {},
+  };
 
-  useEffect(() => {
-    if (onChange) {
-      const { formValid, values: rawValues } = form;
-      const values = cleanFormValues(rawValues);
-      onChange({ formValid, values });
-    }
-  }, [form.values]);
-
-  return (
-    <FormContext.Provider value={ctx}>
-      <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
-        {children}
-      </FormWrapper>
-    </FormContext.Provider>
-  );
-};
+  return Form;
+}
 
 export default formFactory;
