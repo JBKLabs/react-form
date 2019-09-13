@@ -3,15 +3,15 @@ import PropTypes from 'prop-types';
 
 import formFactory from './formFactory';
 
-const FormWrapper = ({ children, onSubmit, ...remainingProps }) => (
-  <form onSubmit={onSubmit} {...remainingProps}>
+const FormWrapper = ({ children }) => (
+  <>
     {children}
-  </form>
+  </>
 );
 
 FormWrapper.propTypes = {
   children: PropTypes.any,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func,
 };
 
 export default formFactory(FormWrapper);

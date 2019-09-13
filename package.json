@@ -2,6 +2,13 @@
   "name": "@jbk/react-form",
   "version": "0.1.0",
   "description": "Form utilities for react web and native projects",
+  "main": "dist/index.js",
+  "react-native": "native/dist/index.js",
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "rollup -c",
+    "start": "rollup -c -w"
+  },
   "keywords": [
     "@jbk",
     "react",
@@ -15,15 +22,30 @@
   "authors": [
     "Brian Maule (https://github.com/mauleb)"
   ],
-  "files": [ "src" ],
+  "files": [
+    "dist",
+    "native"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/JBKLabs/react-form.git"
   },
-  "main": "./src/index.js",
   "peerDependencies": {
-    "react": "^16.8.3",
-    "react-native": "^0.59.8",
-    "react-native-elements": "^1.1.0"
-  }
+    "react": "^16.8.3"
+  },
+  "optionalDependencies": {
+    "react-native": "^0.59.8"
+  },
+  "devDependencies": {
+    "@babel/core": "7.5.4",
+    "@babel/plugin-external-helpers": "7.2.0",
+    "@babel/plugin-proposal-class-properties": "7.5.0",
+    "@babel/preset-react": "7.0.0",
+    "rollup": "1.17.0",
+    "rollup-plugin-babel": "4.3.3",
+    "rollup-plugin-commonjs": "10.0.1",
+    "rollup-plugin-node-resolve": "5.2.0",
+    "rollup-plugin-sourcemaps": "0.4.2"
+  },
+  "dependencies": {}
 }

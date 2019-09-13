@@ -1,73 +1,49 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useContext, useCallback } from 'react';
 
-import { FormContext } from './Form';
+import FormContext from './FormContext';
 
-const withFormHandling = (FormInput) => {
-  class WrappedComponent extends Component {
-    static contextType = FormContext;
+const withFormHandling = (
+  FormInput, 
+  onFormValueChange=() => {}
+) => ({
+  name,
+  defaultValue='',
+  ...remainingProps
+}) => {
+  const { 
+    values, setValue,
+    errors, setError,
+  } = useContext(FormContext);
 
-    setFormInputValue = value => {
-      const { name } = this.props;
-      const { handleValue } = this.context;
-      handleValue({ name, value });
+  const setNamedValue = useCallback((value) => {
+    try {
+      onFormValueChange(value, remainingProps);  
+      setError(name, null);
+    } catch (e) {
+      const message = e.displayText || e;
+      setError(name, message);
     }
 
-    setFormInputValidity = valid => {
-      const { name } = this.props;
-      const { handleValid } = this.context;
-      handleValid({ name, valid });
+    setValue(name, value);
+  }, [name]);
+
+  useEffect(() => {
+    setNamedValue(defaultValue);
+    return () => {
+      setValue(name,undefined);
+      setError(name,undefined);
     }
+  },[name, defaultValue]);
 
-    render() {
-      const { 
-        name, value: injectedValue, valid: injectedValid, 
-        setFormInputValue: injectedValueChange, 
-        setFormInputValidity: injectedValidityChange, 
-        ...remaining 
-      } = this.props;
-      
-      return this.context
-        ? (
-          <FormInput
-            name={name}
-            setFormInputValue={this.setFormInputValue}
-            setFormInputValidity={this.setFormInputValidity}
-            value={this.context.formValues[name]}
-            valid={this.context.formValidity[name]}
-            {...remaining}
-          />
-        ) : (
-          <FormInput
-            name={name}
-            setFormInputValue={injectedValueChange}
-            setFormInputValidity={injectedValidityChange}
-            value={injectedValue}
-            valid={injectedValid}
-            {...remaining}
-          />
-        )
-    }
-  }
-
-  WrappedComponent.propTypes = {
-    name: PropTypes.string,
-    optional: PropTypes.bool,
-    value: PropTypes.any,
-    valid: PropTypes.bool,
-    setFormInputValue: PropTypes.func,
-    setFormInputValidity: PropTypes.func,
-  };
-
-  WrappedComponent.defaultProps = {
-    optional: false,
-    value: '',
-    valid: true,
-    setFormInputValue: () => {},
-    setFormInputValidity: () => {},
-  };
-
-  return WrappedComponent;
-}
+  return (
+    <FormInput 
+      value={values[name] || ''}
+      error={errors[name] || null}
+      setValue={setNamedValue}
+      name={name}
+      {...remainingProps} 
+    />
+  );
+};
 
 export default withFormHandling;
