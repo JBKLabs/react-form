@@ -25,6 +25,16 @@ Let's make forms a little less painful shall we?
 npm install jbklabs/react-form#0.1.0
 ```
 
+## React Native Development
+
+Due to some limitations of `react-native`, form submit events are only supported by the web version of this package at this time. In addition, you should always import from the `native` submodule when developing in `react-native`. For example:
+
+```js
+import { Form, withFormHandling } from '@jbk/react-form'; // This will not work for react-native projects
+
+import { Form, withFormHandling } from '@jbk/react-form/native';
+```
+
 ## API
 
 This library exports the following:
@@ -149,6 +159,8 @@ Other than props supported by html's `form`, you can provide the following props
 
 This callback function will be called anytime a submit event is fired within the `Form` component.
 
+**NOTE**: this callback is not currently supported for `react-native`, use the `onChange` callback instead.
+
 `formValid`: true or false based on all of the nested inputs `error` prop
 `values`: All form values structured based on wrapped input names.
 
@@ -175,9 +187,14 @@ could call your provided `onSubmit` callback with:
 }
 ```
 
-**onChangeFormValid(formValid)**
+**onChange({ formValid, values })**
 
-This callback function will be called anytime the value of `formValid` changes, regardless of whether a submit event was fired.
+This callback function will be called anytime a form value changes.
+
+`formValid`: true or false based on all of the nested inputs `error` prop
+`values`: All form values structured based on wrapped input names.
+
+An example of what this might look like can be seen above
 
 ## Contributors
 
