@@ -16,7 +16,6 @@ const formFactory = (FormWrapper) => ({
   onSubmit,
   onChange,
   children, 
-  onChangeFormValid,
   ...remainingProps
 }) => {
   const [form, setForm] = useState({
@@ -62,15 +61,10 @@ const formFactory = (FormWrapper) => ({
   },[form]);
 
   useEffect(() => {
-    if (onChangeFormValid) {
-      onChangeFormValid(form.formValid);
-    }
-  }, [form.formValid]);
-
-  useEffect(() => {
     if (onChange) {
-      const values = cleanFormValues(form.values);
-      onChange(values);
+      const { formValid, values: rawValues } = form;
+      const values = cleanFormValues(rawValues);
+      onChange({ formValid, values });
     }
   }, [form.values]);
 

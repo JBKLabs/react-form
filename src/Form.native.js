@@ -10,7 +10,7 @@ const FormWrapper = ({ children }) => (
 );
 
 FormWrapper.propTypes = {
-  children: PropTypes.func,
+  children: PropTypes.any,
   onSubmit: PropTypes.func,
 };
 
