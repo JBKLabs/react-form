@@ -3,8 +3,7 @@
   "version": "0.1.0",
   "description": "Form utilities for react web and native projects",
   "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "react-native": "dist/native/index.js",
+  "react-native": "native/dist/index.js",
   "scripts": {
     "prepare": "npm run build",
     "build": "rollup -c",
@@ -24,12 +23,9 @@
     "Brian Maule (https://github.com/mauleb)"
   ],
   "files": [
-    "dist"
+    "dist",
+    "native"
   ],
-  "exports": {
-    "./": "./dist/",
-    "./native/": "./dist/native/"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/JBKLabs/react-form.git"

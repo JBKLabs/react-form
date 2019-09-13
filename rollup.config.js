@@ -32,7 +32,7 @@ const webConfig = {
 
 const nativeConfig = {
   ...configBase,
-  input: './src/native/index.js',
+  input: './src/index.native.js',
   output: [
     {
       file: pkg['react-native'],

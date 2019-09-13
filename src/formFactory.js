@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 
-import transposeKeys from '../transposeKeys';
-import FormContext from '../FormContext';
+import transposeKeys from './transposeKeys';
+import FormContext from './FormContext';
 
 const formFactory = (FormWrapper) => ({ 
   onSubmit, 
