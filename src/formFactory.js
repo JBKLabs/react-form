@@ -1,80 +1,67 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 
-import transposeKeys from './transposeKeys';
+import { transposeKeys, useFormReducer, globMatch } from './util';
 import FormContext from './FormContext';
 
-const cleanFormValues = (values) => {
-  const cleanedValues = Object
-    .keys(values)
-    .filter(k => values[k] !== undefined)
-    .reduce((obj, key) => ({ ...obj, [key]: values[key]}), {});
+const formFactory = (FormWrapper) => {
+  const Form = ({ 
+    onSubmit,
+    onChange,
+    children, 
+    ...remainingProps
+  }) => {
+    const [form, dispatch] = useFormReducer();
 
-  return transposeKeys(cleanedValues);
-};
+    const updateSubscribers = useCallback((callback) => {
+      const { values, defaults, formValid } = form;
+      const transposedValues = transposeKeys(values);
 
-const formFactory = (FormWrapper) => ({ 
-  onSubmit,
-  onChange,
-  children, 
-  ...remainingProps
-}) => {
-  const [form, setForm] = useState({
-    formValid: false,
-    values: {},
-    errors: {},
-  });
+      const resetInputs = (patterns = ['*']) => {
+        const keys = globMatch(patterns, Object.keys(values));
+        const changes = keys.reduce((obj, k) => ({ ...obj, [k]: defaults[k] }), {});
+        dispatch.setMany({ changes });
+      }
 
-  const ctx = useMemo(() => ({
-    values: form.values,
-    errors: form.errors,
-    setValue: (name, value) => setForm(prev => ({
-      ...prev, 
-      values: { 
-        ...prev.values, 
-        [name]: value 
-      } 
-    })),
-    setError: (name, error) => setForm(prev => {
-      const values = prev.values;
-      const errors = {
-        ...prev.errors,
-        [name]: error
-      };
-      const formValid = Object
-        .values(errors)
-        .filter(v => v !== undefined)
-        .reduce((valid, nextError) => valid && nextError === null, true);
+      callback({ formValid, values: transposedValues, resetInputs });
+    },[form, dispatch]);
 
-      return {
-        values,
-        errors,
-        formValid
-      };
-    }),
-  }), [form]);
-
-  const handleOnSubmit = useCallback((e) => {
-    e.preventDefault();
-    const { formValid, values: rawValues } = form;
-    const values = cleanFormValues(rawValues);
-    onSubmit({ formValid, values });
-  },[form]);
-
-  useEffect(() => {
-    if (onChange) {
-      const { formValid, values: rawValues } = form;
-      const values = cleanFormValues(rawValues);
-      onChange({ formValid, values });
+    const handleOnSubmit = (e) => {
+      e.preventDefault();
+      updateSubscribers(onSubmit);
     }
-  }, [form.values]);
+    const handleOnChange = () => updateSubscribers(onChange);
 
-  return (
-    <FormContext.Provider value={ctx}>
-      <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
-        {children}
-      </FormWrapper>
-    </FormContext.Provider>
-  );
-};
+    const ctx = useMemo(() => ({
+      values: form.values,
+      errors: form.errors,
+      setValue: (name, value) => dispatch.setValue({ name, value }),
+      setError: (name, error) => dispatch.setError({ name, error }),
+      setDefault: (name, defaultValue) => dispatch.setDefault({ name, defaultValue }),
+      removeKey: (name) => dispatch.removeKey({ name }),
+    }), [form]);
+  
+    useEffect(() => {
+      if (form.triggerOnChange) {
+        handleOnChange();
+        dispatch.unset({ trigger: 'triggerOnChange' });
+      }
+    },[form.triggerOnChange])
+
+    return (
+      <FormContext.Provider value={ctx}>
+        <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
+          {children}
+        </FormWrapper>
+      </FormContext.Provider>
+    );
+  };
+
+  Form.defaultProps = {
+    onSubmit: () => {},
+    onChange: () => {},
+  };
+
+  return Form;
+}
 
 export default formFactory;

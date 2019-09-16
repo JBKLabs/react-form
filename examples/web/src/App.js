@@ -26,7 +26,10 @@ const styles = {
 };
 
 class App extends Component {
-  onSubmit = values => console.log(values);
+  onSubmit = ({ formValid, values, resetInputs }) => {
+    console.log({ formValid, values });
+    resetInputs();
+  }
 
   render() {
     return (
