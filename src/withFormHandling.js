@@ -4,7 +4,7 @@ import FormContext from './FormContext';
 
 const withFormHandling = (
   FormInput, 
-  onFormValueChange=() => {}
+  onFormChange=() => {},
 ) => ({
   name,
   defaultValue='',
@@ -13,32 +13,36 @@ const withFormHandling = (
   const { 
     values, setValue,
     errors, setError,
+    setDefault,
+    removeKey,
   } = useContext(FormContext);
 
+  const value = values[name] || '';
+  const error = errors[name] || null;
+
   const setNamedValue = useCallback((value) => {
+    setValue(name, value);
+  }, [name]);
+
+  useEffect(() => {
+    setDefault(name, defaultValue);
+    return () => removeKey(name);
+  },[name, defaultValue]);
+
+  useEffect(() => {
     try {
-      onFormValueChange(value, remainingProps);  
+      onFormChange(value, remainingProps);  
       setError(name, null);
     } catch (e) {
       const message = e.displayText || e;
       setError(name, message);
     }
-
-    setValue(name, value);
-  }, [name]);
-
-  useEffect(() => {
-    setNamedValue(defaultValue);
-    return () => {
-      setValue(name,undefined);
-      setError(name,undefined);
-    }
-  },[name, defaultValue]);
+  }, [value])
 
   return (
     <FormInput 
-      value={values[name] || ''}
-      error={errors[name] || null}
+      value={value}
+      error={error}
       setValue={setNamedValue}
       name={name}
       {...remainingProps} 

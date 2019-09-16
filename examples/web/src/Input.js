@@ -22,7 +22,7 @@ const Input = ({
   );
 }
 
-const onFormValueChange = (value, { regex }) => {
+const onFormValueChange = (value, { name, regex }) => {
   if (regex && !value.match(regex)) {
     throw new ValidationError('Invalid pattern.')
   } else if (!regex && value === 'hell') {
@@ -30,7 +30,6 @@ const onFormValueChange = (value, { regex }) => {
   }else if (!regex && value !== 'hello') {
     throw new ValidationError('Too Rude.');
   }
-  return value;
 }
 
 export default withFormHandling(Input, onFormValueChange);

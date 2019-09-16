@@ -4,15 +4,18 @@ Let's make forms a little less painful shall we?
 
 ```js
 <Form
-  onSubmit={({ values, formValid }) => {
+  onSubmit={({ values, formValid, resetInputs }) => {
     if (formValid) {
       makeApiCall(values);
+    } else {
+      resetInputs(['password']);
     }
   }}
 >
   <Input name="user.firstName" />
   <Input name="user.lastName" />
   <Input name="email" />
+  <Input name="password" />
   <button type="submit">
     Submit
   </button>
@@ -155,7 +158,7 @@ All components wrapped by `withFormHandling` must be nested underneath one of `r
 
 Other than props supported by html's `form`, you can provide the following props to the `Form` component:
 
-**onSubmit({ formValid, values })**
+**onSubmit({ formValid, values, resetInputs })**
 
 This callback function will be called anytime a submit event is fired within the `Form` component.
 
@@ -163,6 +166,7 @@ This callback function will be called anytime a submit event is fired within the
 
 `formValid`: true or false based on all of the nested inputs' `error` props.
 `values`: All form values; structure is based on the value of nested inputs' `name` props.
+`resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
 
 For example, the following form:
 
@@ -183,7 +187,8 @@ could call your provided `onSubmit` callback with:
       value: 'example1',
     },
     value: 'example2'
-  }
+  },
+  resetInputs: () => {...}
 }
 ```
 
@@ -193,8 +198,38 @@ This callback function will be called anytime a form value changes.
 
 `formValid`: true or false based on all of the nested inputs' `error` props.
 `values`: All form values; structure is based on the value of nested inputs' `name` props.
+`resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
 
 An example of what this might look like can be seen in the `onSubmit` section.
+
+**Resetting Inputs**
+
+In both of the provided `Form` lifecycle hooks, `onChange` and `onSubmit`, you are able to reset the value of one or more inputs back to their default values via the provided `resetInputs(patterns)` function.
+
+`patterns`: An array of glob patterns which will be matched with your inputs' names.
+
+Given the following form:
+
+```jsx
+<Form
+  onChange={() => {...}}
+>
+  <Input name="username" defaultValue="johndoe34" >
+  <Input name="address.street" >
+  <Input name="address.city" >
+  <Input name="address.state" >
+  <Input name="address.zip" >
+</Form>
+```
+
+* `resetInputs(['address.state', 'address.city'])` will reset the values of `address.state` and `address.city` back to empty strings
+
+* `resetInputs(['username'])` will reset the value of `username` to `johndoe34`
+
+* `resetInputs(['address.*'])` will reset the value of all inputs **except** `username` back to empty strings
+
+* `resetInputs()` which is the same as `resetInputs(['*'])` will reset all inputs back to their default values
+
 
 ## Contributors
 

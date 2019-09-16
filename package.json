@@ -47,5 +47,7 @@
     "rollup-plugin-node-resolve": "5.2.0",
     "rollup-plugin-sourcemaps": "0.4.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "minimatch": "3.0.4"
+  }
 }
