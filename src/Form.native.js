@@ -9,9 +9,6 @@ const FormWrapper = ({ children }) => (
   </>
 );
 
-FormWrapper.propTypes = {
-	children: PropTypes.any,
-	onSubmit: PropTypes.func
-};
+FormWrapper.propTypes = { children: PropTypes.any };
 
 export default formFactory(FormWrapper);
