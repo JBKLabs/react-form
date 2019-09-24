@@ -1,26 +1,26 @@
 const expand = (obj, keys, value) => {
-  if (keys.length === 1) {
-    return { [keys[0]]: value};
-  }
+	if (keys.length === 1) {
+		return { [keys[0]]: value};
+	}
 
-  const section = obj[keys[0]] || {};
-  return {
-    [keys[0]]: {
-      ...section,
-      ...expand(section, keys.slice(1), value)
-    }
-  };
+	const section = obj[keys[0]] || {};
+	return {
+		[keys[0]]: {
+			...section,
+			...expand(section, keys.slice(1), value)
+		}
+	};
 }
 
 const transposeKeys = (raw) => {
-  const transposed = Object
-    .keys(raw)
-    .reduce((obj, key) => ({
-      ...obj,
-      ...expand(obj, key.split('.'), raw[key])
-    }),{})
+	const transposed = Object
+		.keys(raw)
+		.reduce((obj, key) => ({
+			...obj,
+			...expand(obj, key.split('.'), raw[key])
+		}), {})
 
-  return transposed;
+	return transposed;
 };
 
 export default transposeKeys;

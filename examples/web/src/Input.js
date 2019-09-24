@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withFormHandling, ValidationError } from '@jbk/react-form';
 
 const Input = ({
@@ -7,15 +7,18 @@ const Input = ({
   error,
   ...remainingProps
 }) => {
+  const [blurred, setBlurred] = useState(false);
+
   return (
     <>
       <input
         type="text"
         value={value}
         onChange={e => setValue(e.target.value)}
-        {...remainingProps} 
+        onBlur={() => setBlurred(true)}
+        {...remainingProps}
       />
-      {error && (
+      {error && blurred && (
         <div style={{ color: 'red' }}>{error}</div>
       )}
     </>
@@ -27,7 +30,7 @@ const onFormValueChange = (value, { name, regex }) => {
     throw new ValidationError('Invalid pattern.')
   } else if (!regex && value === 'hell') {
     throw new ValidationError('HEY!');
-  }else if (!regex && value !== 'hello') {
+  } else if (!regex && value !== 'hello') {
     throw new ValidationError('Too Rude.');
   }
 }
