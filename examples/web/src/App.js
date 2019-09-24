@@ -30,7 +30,7 @@ class App extends Component {
     // eslint-disable-next-line no-console
     console.log({ formValid, values });
     resetInputs();
-  }
+  };
 
   render() {
     return (
