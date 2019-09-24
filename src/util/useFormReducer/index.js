@@ -3,7 +3,6 @@ import { useReducer, useMemo } from 'react';
 import * as reducers from './reducers';
 
 const useFormReducer = () => {
-	console.log(reducers);
 	const [form, dispatch] = useReducer(
 		(state, action) => reducers[action.type](state, action),
 		{
