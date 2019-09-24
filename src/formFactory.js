@@ -4,64 +4,68 @@ import { transposeKeys, useFormReducer, globMatch } from './util';
 import FormContext from './FormContext';
 
 const formFactory = (FormWrapper) => {
-  const Form = ({ 
-    onSubmit,
-    onChange,
-    children, 
-    ...remainingProps
-  }) => {
-    const [form, dispatch] = useFormReducer();
+	const Form = ({
+		onSubmit,
+		onChange,
+		children,
+		...remainingProps
+	}) => {
+		const [form, dispatch] = useFormReducer();
 
-    const updateSubscribers = useCallback((callback) => {
-      const { values, defaults, formValid } = form;
-      const transposedValues = transposeKeys(values);
+		const updateSubscribers = useCallback((callback) => {
+			const transposedValues = transposeKeys(form.values);
 
-      const resetInputs = (patterns = ['*']) => {
-        const keys = globMatch(patterns, Object.keys(values));
-        const changes = keys.reduce((obj, k) => ({ ...obj, [k]: defaults[k] }), {});
-        dispatch.setMany({ changes });
-      }
+			const resetInputs = (patterns = ['*']) => {
+				const names = globMatch(patterns, Object.keys(form.values));
+				dispatch.resetNamedInputs({ names });
+			}
 
-      callback({ formValid, values: transposedValues, resetInputs });
-    },[form, dispatch]);
+			callback({ formValid: form.formValid, values: transposedValues, resetInputs });
+		}, [dispatch, form.values, form.formValid]);
 
-    const handleOnSubmit = (e) => {
-      e.preventDefault();
-      updateSubscribers(onSubmit);
-    }
-    const handleOnChange = () => updateSubscribers(onChange);
+		const handleOnSubmit = useCallback((e) => {
+			e.preventDefault();
+			updateSubscribers(onSubmit);
+		}, [updateSubscribers, onSubmit]);
 
-    const ctx = useMemo(() => ({
-      values: form.values,
-      errors: form.errors,
-      setValue: (name, value) => dispatch.setValue({ name, value }),
-      setError: (name, error) => dispatch.setError({ name, error }),
-      setDefault: (name, defaultValue) => dispatch.setDefault({ name, defaultValue }),
-      removeKey: (name) => dispatch.removeKey({ name }),
-    }), [form]);
-  
-    useEffect(() => {
-      if (form.triggerOnChange) {
-        handleOnChange();
-        dispatch.unset({ trigger: 'triggerOnChange' });
-      }
-    },[form.triggerOnChange])
+		const handleOnChange = useCallback(() => updateSubscribers(onChange), [onChange, updateSubscribers]);
 
-    return (
-      <FormContext.Provider value={ctx}>
-        <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
-          {children}
-        </FormWrapper>
-      </FormContext.Provider>
-    );
-  };
+		const handlers = useMemo(() => ({
+			setValue: (name, value) => dispatch.setValue({ name, value }),
+			setError: (name, error) => dispatch.setError({ name, error }),
+			setDefault: (name, defaultValue) => dispatch.setDefault({ name, defaultValue }),
+			removeKey: (name) => dispatch.removeKey({ name })
+		}), [dispatch]);
 
-  Form.defaultProps = {
-    onSubmit: () => {},
-    onChange: () => {},
-  };
+		const ctx = useMemo(() => ({
+			values: form.values,
+			errors: form.errors,
+			keys: form.keys,
+			...handlers
+		}), [form.errors, form.values, form.keys, handlers]);
 
-  return Form;
+		useEffect(() => {
+			if (form.triggerOnChange) {
+				handleOnChange();
+				dispatch.unset({ trigger: 'triggerOnChange' });
+			}
+		}, [dispatch, form.triggerOnChange, handleOnChange])
+
+		return (
+			<FormContext.Provider value={ctx}>
+				<FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
+					{children}
+				</FormWrapper>
+			</FormContext.Provider>
+		);
+	};
+
+	Form.defaultProps = {
+		onSubmit: () => { },
+		onChange: () => { }
+	};
+
+	return Form;
 }
 
 export default formFactory;
