@@ -59,12 +59,16 @@
   "eslintConfig": {
     "extends": [
       "@jbknowledge"
-    ]
+    ],
+    "rules": {
+      "indent": ["error", 2]
+    }
   },
   "prettier": {
     "singleQuote": true,
     "semi": true,
     "bracketSpacing": true,
-    "arrowParens": "always"
+    "arrowParens": "always",
+    "tabWidth": 2
   }
 }

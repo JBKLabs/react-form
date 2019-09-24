@@ -27,6 +27,7 @@ const styles = {
 
 class App extends Component {
   onSubmit = ({ formValid, values, resetInputs }) => {
+    // eslint-disable-next-line no-console
     console.log({ formValid, values });
     resetInputs();
   }
