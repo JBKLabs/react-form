@@ -1,5 +1,5 @@
-import React,{ Component } from 'react';
-import { Form } from '@jbk/react-form';
+import React, { Component } from 'react';
+import { Form } from '@jbknowledge/react-form';
 
 import Input from './Input';
 
@@ -35,8 +35,8 @@ class App extends Component {
     return (
       <div style={styles.wrapper}>
         <div style={styles.formWrapper}>
-          <Form 
-            onSubmit={this.onSubmit} 
+          <Form
+            onSubmit={this.onSubmit}
             style={{ display: 'flex', flexDirection: 'column' }}
           >
             <Input name="firstName" />

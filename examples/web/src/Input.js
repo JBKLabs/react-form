@@ -1,5 +1,5 @@
 import React from 'react';
-import { withFormHandling, ValidationError } from '@jbk/react-form';
+import { withFormHandling, ValidationError } from '@jbknowledge/react-form';
 
 const Input = ({
   value,
@@ -13,7 +13,7 @@ const Input = ({
         type="text"
         value={value}
         onChange={e => setValue(e.target.value)}
-        {...remainingProps} 
+        {...remainingProps}
       />
       {error && (
         <div style={{ color: 'red' }}>{error}</div>
@@ -27,7 +27,7 @@ const onFormValueChange = (value, { name, regex }) => {
     throw new ValidationError('Invalid pattern.')
   } else if (!regex && value === 'hell') {
     throw new ValidationError('HEY!');
-  }else if (!regex && value !== 'hello') {
+  } else if (!regex && value !== 'hello') {
     throw new ValidationError('Too Rude.');
   }
 }
