@@ -2,50 +2,60 @@ import React, { useEffect, useContext, useCallback } from 'react';
 
 import FormContext from './FormContext';
 
-const withFormHandling = (
-  FormInput, 
-  onFormChange=() => {},
-) => ({
+const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   name,
-  defaultValue='',
+  defaultValue = '',
   ...remainingProps
 }) => {
-  const { 
-    values, setValue,
-    errors, setError,
+  const {
+    values,
+    setValue,
+    errors,
+    setError,
+    keys,
     setDefault,
-    removeKey,
+    removeKey
   } = useContext(FormContext);
 
   const value = values[name] || '';
   const error = errors[name] || null;
+  const key = keys[name] || name;
 
-  const setNamedValue = useCallback((value) => {
-    setValue(name, value);
-  }, [name]);
+  const setNamedValue = useCallback(
+    (nextValue) => {
+      setValue(name, nextValue);
+    },
+    [name, setValue]
+  );
 
   useEffect(() => {
     setDefault(name, defaultValue);
     return () => removeKey(name);
-  },[name, defaultValue]);
+  }, [name, defaultValue, setDefault, removeKey]);
 
   useEffect(() => {
     try {
-      onFormChange(value, remainingProps);  
-      setError(name, null);
+      onFormChange(value, remainingProps);
+      if (error !== null) {
+        setError(name, null);
+      }
     } catch (e) {
       const message = e.displayText || e;
-      setError(name, message);
+      if (error !== message) {
+        setError(name, message);
+      }
     }
-  }, [value])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
 
   return (
-    <FormInput 
+    <FormInput
       value={value}
       error={error}
       setValue={setNamedValue}
       name={name}
-      {...remainingProps} 
+      {...remainingProps}
+      key={key}
     />
   );
 };
