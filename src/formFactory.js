@@ -54,10 +54,10 @@ const formFactory = (FormWrapper) => {
         values: form.values,
         errors: form.errors,
         keys: form.keys,
-        inputProps: form.inputProps,
+        inputProps,
         ...handlers
       }),
-      [form.errors, form.values, form.keys, form.inputProps, handlers]
+      [form.values, form.errors, form.keys, inputProps, handlers]
     );
 
     useEffect(() => {
