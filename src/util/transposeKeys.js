@@ -18,7 +18,7 @@ const transposeKeys = (raw) => {
     .reduce((obj, key) => ({
       ...obj,
       ...expand(obj, key.split('.'), raw[key])
-    }),{})
+    }), {})
 
   return transposed;
 };
