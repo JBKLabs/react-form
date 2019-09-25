@@ -53,11 +53,12 @@ This HoC will provide `Component` with 3 props:
 `value`: The current value for the input  
 `setValue`: A callback function which replace the existing form value 
 `error`: The current error message associated with the input, or null
+`inputProps`: An object of meta values which are passed to all inputs within the form
 
 ```jsx
-const Input = ({ value, setValue, error }) => (
+const Input = ({ value, setValue, error, inputProps }) => (
   <div className="form-group">
-    {error && <div className="form-error">{error}</div>}
+    {error && inputProps.displayErrors && <div className="form-error">{error}</div>}
     <input
       className="form-input"
       value={value}
