@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withFormHandling, ValidationError } from '@jbk/react-form';
+import { withFormHandling, ValidationError } from '@jbknowledge/react-form';
 
 const Input = ({ value, setValue, error, ...remainingProps }) => {
   const [blurred, setBlurred] = useState(false);

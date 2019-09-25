@@ -7,8 +7,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@jbk/react-form": "github:jbklabs/react-form",
-    "@jbknowledge/react-form": "github:mauleb/react-form#4-create-react-example-for-local-dev",
+    "@jbknowledge/react-form": "github:jbklabs/react-form#14-migrate-to-jbknowledge-scope",
     "react": "16.8.3",
     "react-native": "0.59.8"
   },
