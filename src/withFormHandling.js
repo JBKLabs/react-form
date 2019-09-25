@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useCallback } from 'react';
 
 import FormContext from './FormContext';
 
-const withFormHandling = (FormInput, onFormChange = () => {}) => ({
+const withFormHandling = (FormInput, onFormChange = () => { }) => ({
   name,
   defaultValue = '',
   ...remainingProps
@@ -36,14 +36,10 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   useEffect(() => {
     try {
       onFormChange(value, remainingProps);
-      if (error !== null) {
-        setError(name, null);
-      }
+      setError(name, null);
     } catch (e) {
       const message = e.displayText || e;
-      if (error !== message) {
-        setError(name, message);
-      }
+      setError(name, message);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
