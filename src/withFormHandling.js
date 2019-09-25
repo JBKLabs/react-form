@@ -47,7 +47,7 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value]);
+  }, [value, inputProps]);
 
   return (
     <FormInput
