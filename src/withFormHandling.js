@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useCallback } from 'react';
 
 import FormContext from './FormContext';
 
-const withFormHandling = (FormInput, onFormChange = () => {}) => ({
+const withFormHandling = (FormInput, onFormChange = () => { }) => ({
   name,
   defaultValue = '',
   ...remainingProps
@@ -35,7 +35,11 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
 
   useEffect(() => {
     try {
-      onFormChange(value, remainingProps);
+      if (typeof onFormChange === 'function') {
+        onFormChange(value, remainingProps);
+      } else if (Array.isArray(onFormChange)) {
+        onFormChange.forEach(cb => cb(value, remainingProps));
+      }
       if (error !== null) {
         setError(name, null);
       }
