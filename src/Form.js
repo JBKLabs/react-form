@@ -11,7 +11,7 @@ const FormWrapper = ({ children, onSubmit, ...remainingProps }) => (
 
 FormWrapper.propTypes = {
   children: PropTypes.any,
-  onSubmit: PropTypes.func.isRequired,
+  onSubmit: PropTypes.func.isRequired
 };
 
 export default formFactory(FormWrapper);

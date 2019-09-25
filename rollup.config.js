@@ -12,10 +12,10 @@ const configBase = {
     resolve(),
     babel({
       exclude: ['node_modules/**', '**/node_modules/**'],
-      plugins: ['@babel/plugin-external-helpers'],
+      plugins: ['@babel/plugin-external-helpers']
     }),
     commonjs()
-  ],
+  ]
 };
 
 const webConfig = {
@@ -27,7 +27,7 @@ const webConfig = {
       format: 'es',
       sourcemap: true
     }
-  ],
+  ]
 }
 
 const nativeConfig = {
@@ -39,9 +39,8 @@ const nativeConfig = {
       format: 'es',
       sourcemap: true
     }
-  ],
+  ]
 };
-
 
 export default [
   webConfig,

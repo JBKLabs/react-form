@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useReducer, useMemo } from 'react';
 
 import * as reducers from './reducers';
 
@@ -8,15 +8,21 @@ const useFormReducer = () => {
     {
       values: {},
       defaults: {},
+      keys: {},
       errors: {},
       formValid: false,
-      triggerOnChange: false,
+      triggerOnChange: false
     }
   );
 
-  const dispatchHelper = Object
-    .keys(reducers)
-    .reduce((helper, type) => ({ ...helper, [type]: (action) => dispatch({ ...action, type }) }), {});
+  const dispatchHelper = useMemo(() => {
+    return Object
+      .keys(reducers)
+      .reduce((helper, type) => ({
+        ...helper,
+        [type]: (action) => dispatch({ ...action, type })
+      }), {});
+  }, [dispatch]);
 
   return [form, dispatchHelper];
 }

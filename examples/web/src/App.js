@@ -27,9 +27,10 @@ const styles = {
 
 class App extends Component {
   onSubmit = ({ formValid, values, resetInputs }) => {
+    // eslint-disable-next-line no-console
     console.log({ formValid, values });
     resetInputs();
-  }
+  };
 
   render() {
     return (
@@ -39,8 +40,6 @@ class App extends Component {
             onSubmit={this.onSubmit}
             style={{ display: 'flex', flexDirection: 'column' }}
           >
-            <Input name="firstName" />
-            <Input name="lastName" regex=".*" />
             <Input name="user.phone" regex="^\d{7}$" />
             <Input name="user.email" regex="^\d{7}$" />
             <button type="submit">wow</button>
