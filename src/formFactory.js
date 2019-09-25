@@ -4,7 +4,7 @@ import { transposeKeys, useFormReducer, globMatch } from './util';
 import FormContext from './FormContext';
 
 const formFactory = (FormWrapper) => {
-  const Form = ({ onSubmit, onChange, children, ...remainingProps }) => {
+  const Form = ({ onSubmit, onChange, inputProps, children, ...remainingProps }) => {
     const [form, dispatch] = useFormReducer();
 
     const updateSubscribers = useCallback(
@@ -54,9 +54,10 @@ const formFactory = (FormWrapper) => {
         values: form.values,
         errors: form.errors,
         keys: form.keys,
+        inputProps: form.inputProps,
         ...handlers
       }),
-      [form.errors, form.values, form.keys, handlers]
+      [form.errors, form.values, form.keys, form.inputProps, handlers]
     );
 
     useEffect(() => {

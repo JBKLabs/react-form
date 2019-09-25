@@ -13,6 +13,7 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
     errors,
     setError,
     keys,
+    inputProps,
     setDefault,
     removeKey
   } = useContext(FormContext);
@@ -54,6 +55,7 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
       error={error}
       setValue={setNamedValue}
       name={name}
+      inputProps={inputProps}
       {...remainingProps}
       key={key}
     />
