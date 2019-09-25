@@ -79,7 +79,7 @@ more on this below.
 
 **Error Handling**
 
-By default, `react-form` does not provide any error handling. The second argument for the HoC `withFormHandling` or `onChange` is how you can declare validation rules for your components. `onChange(value, props)` will be called automatically by `react-form` everytime the provided `setValue` prop is called. The first arg `value` will be the next value while `props` will be all props passed to your wrapped component. This function when called sets the value of `error` on your behalf. Any error thrown by the `onChange` callback you provide will automatically be caught and passed to your component via the `error` prop.
+By default, `react-form` does not provide any error handling. The second argument for the HoC `withFormHandling` or `onChange` is how you can declare validation rules for your components. `onChange` is expected to be either a single callback or an array of callbacks and will be called automatically by `react-form` everytime the provided `setValue` prop is called. The first arg `value` will be the next value while `props` will be all props passed to your wrapped component. This function when called sets the value of `error` on your behalf. Any error thrown by the `onChange` callback you provide will automatically be caught and passed to your component via the `error` prop.
 
 ```jsx
 export default withFormHandling(Input, (value) => {
@@ -105,6 +105,15 @@ export default withFormHandling(Input, (value, { regex }) => {
     throw new ValidationError('Invalid pattern.')
   }
 });
+```
+
+If you provide an array of callback functions, each will run until an error is thrown.
+
+```jsx
+export default withFormHandling(Input, [
+  () => throw new ValidationError('Invalid'),
+  someValidationFunction // never called because the first callback always errors
+]);
 ```
 
 **Input Names**
