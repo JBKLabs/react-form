@@ -13,9 +13,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `onFormValuesChange` and `onFormValidityChange` props for `Form` have been removed and replaced with `onChange` and `onSubmit`
 - `setFormInputValue`, `setFormInputValidity`, `valid` as props for components wrapped by `withFormHandling` have been removed and replaced with `setValue` and `error`
 
-### Updated
-- allow `withFormHandling`'s optional `onChange` callback prop to be an array of callbacks as well as a single callback function. ([#22](https://github.com/JBKLabs/react-form/issues/22))
+### Fixed
+- bug where form input errors are never initialized ([#21](https://github.com/JBKLabs/react-form/issues/21))
 
 ### Removed
 - `TextInput` component which has `react-form` preconfigured
 
+### Updated
+- allow `withFormHandling`'s optional `onChange` callback prop to be an array of callbacks as well as a single callback function. ([#22](https://github.com/JBKLabs/react-form/issues/22))
