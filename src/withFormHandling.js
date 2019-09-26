@@ -40,14 +40,10 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
       } else if (Array.isArray(onFormChange)) {
         onFormChange.forEach(cb => cb(value, remainingProps));
       }
-      if (error !== null) {
-        setError(name, null);
-      }
+      setError(name, null);
     } catch (e) {
       const message = e.displayText || e;
-      if (error !== message) {
-        setError(name, message);
-      }
+      setError(name, message);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
