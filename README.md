@@ -53,11 +53,12 @@ This HoC will provide `Component` with 3 props:
 `value`: The current value for the input  
 `setValue`: A callback function which replace the existing form value 
 `error`: The current error message associated with the input, or null
+`inputProps`: An object of meta values which are passed to all inputs within the form
 
 ```jsx
-const Input = ({ value, setValue, error }) => (
+const Input = ({ value, setValue, error, inputProps }) => (
   <div className="form-group">
-    {error && <div className="form-error">{error}</div>}
+    {error && inputProps.displayErrors && <div className="form-error">{error}</div>}
     <input
       className="form-input"
       value={value}
@@ -210,6 +211,31 @@ This callback function will be called anytime a form value changes.
 `resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
 
 An example of what this might look like can be seen in the `onSubmit` section.
+
+**inputProps**
+
+This is a simple object that passes user defined props directly to the wrapped inputs. For example:
+
+```jsx
+<Form
+  inputProps={{
+    displayErrors: false,
+  }}
+>
+```
+
+This `inputProps` block would be passed as is automatically to all inputs wrapped by `withFormHandling` making the following possible:
+
+```jsx
+const CustomInput = ({ value, error, setValue, inputProps }) => (
+  <div>
+    { error && inputProps.displayErrors && <div>{error}</div>}
+    <input ... />
+  </div>
+);
+
+export default withFormHandling(CustomInput);
+```
 
 **Resetting Inputs**
 
