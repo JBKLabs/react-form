@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form } from '@jbk/react-form';
+import { Form } from '@jbknowledge/react-form';
 
 import Input from './Input';
 

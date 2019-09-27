@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withFormHandling, ValidationError } from '@jbk/react-form';
+import { withFormHandling, ValidationError } from '@jbknowledge/react-form';
 
 const Input = ({ value, setValue, error, ...remainingProps }) => {
   const [blurred, setBlurred] = useState(false);
@@ -18,7 +18,7 @@ const Input = ({ value, setValue, error, ...remainingProps }) => {
   );
 };
 
-const onFormValueChange = (value, { name, regex }) => {
+const onFormValueChange = (value, { regex }) => {
   if (regex && !value.match(regex)) {
     throw new ValidationError('Invalid pattern.');
   } else if (!regex && value === 'hell') {

@@ -1,5 +1,5 @@
 {
-  "name": "@jbk/react-form",
+  "name": "@jbknowledge/react-form",
   "version": "0.1.0",
   "description": "Form utilities for react web and native projects",
   "main": "dist/index.js",
@@ -12,7 +12,7 @@
     "lint:fix": "eslint src/* --fix && prettier src/* --write"
   },
   "keywords": [
-    "@jbk",
+    "jbknowledge",
     "react",
     "form"
   ],

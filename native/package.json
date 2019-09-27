@@ -1,5 +1,5 @@
 {
-  "name": "@jbk/react-form/native",
+  "name": "@jbknowledge/react-form/native",
   "private": true,
   "main": "./dist/index.js"
 }

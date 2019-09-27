@@ -25,7 +25,7 @@ Let's make forms a little less painful shall we?
 ## Installation
 
 ```bash
-npm install jbklabs/react-form#0.1.0
+npm install @jbknowledge/react-form
 ```
 
 ## React Native Development
@@ -33,9 +33,9 @@ npm install jbklabs/react-form#0.1.0
 Due to some limitations of `react-native`, form submit events are only supported by the web version of this package at this time. In addition, you should always import from the `native` submodule when developing in `react-native`. For example:
 
 ```jsx
-import { Form, withFormHandling } from '@jbk/react-form'; // This will not work for react-native projects
+import { Form, withFormHandling } from '@jbknowledge/react-form'; // This will not work for react-native projects
 
-import { Form, withFormHandling } from '@jbk/react-form/native';
+import { Form, withFormHandling } from '@jbknowledge/react-form/native';
 ```
 
 ## API
