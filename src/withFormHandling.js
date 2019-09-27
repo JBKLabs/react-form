@@ -35,7 +35,11 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
 
   useEffect(() => {
     try {
-      onFormChange(value, remainingProps);
+      if (typeof onFormChange === 'function') {
+        onFormChange(value, remainingProps);
+      } else if (Array.isArray(onFormChange)) {
+        onFormChange.forEach(cb => cb(value, remainingProps));
+      }
       setError(name, null);
     } catch (e) {
       const message = e.displayText || e;
