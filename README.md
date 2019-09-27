@@ -203,6 +203,31 @@ This callback function will be called anytime a form value changes.
 
 An example of what this might look like can be seen in the `onSubmit` section.
 
+**inputProps**
+
+This is a simple object that passes user defined props directly to the wrapped inputs. For example:
+
+```jsx
+<Form
+  inputProps={{
+    displayErrors: false,
+  }}
+>
+```
+
+This `inputProps` block would be passed as is automatically to all inputs wrapped by `withFormHandling` making the following possible:
+
+```jsx
+const CustomInput = ({ value, error, setValue, inputProps }) => (
+  <div>
+    { error && inputProps.displayErrors && <div>{error}</div>}
+    <input ... />
+  </div>
+);
+
+export default withFormHandling(CustomInput);
+```
+
 **Resetting Inputs**
 
 In both of the provided `Form` lifecycle hooks, `onChange` and `onSubmit`, you are able to reset the value of one or more inputs back to their default values via the provided `resetInputs(patterns)` function.

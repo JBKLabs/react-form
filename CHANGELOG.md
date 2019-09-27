@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - `@jbk/react-form/native` module export for react native development
 - ability to reset inputs back to their default values via `resetInputs`
-- `inputProps` prop for meta values passed into components wrapped by `withFormHandling`
+- `inputProps` prop for meta values passed into components wrapped by `withFormHandling` ([#20](https://github.com/JBKLabs/react-form/issues/20))
 
 ### Changed
 - `onFormValuesChange` and `onFormValidityChange` props for `Form` have been removed and replaced with `onChange` and `onSubmit`
