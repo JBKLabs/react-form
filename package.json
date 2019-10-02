@@ -1,6 +1,6 @@
 {
   "name": "@jbknowledge/react-form",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Form utilities for react web and native projects",
   "main": "dist/index.js",
   "react-native": "native/dist/index.js",
@@ -61,7 +61,10 @@
       "@jbknowledge"
     ],
     "rules": {
-      "indent": ["error", 2]
+      "indent": [
+        "error",
+        2
+      ]
     }
   },
   "prettier": {
