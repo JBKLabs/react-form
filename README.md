@@ -48,12 +48,12 @@ This library exports the following:
 
 **withFormHandling(Component, onChange)**
 
-This HoC will provide `Component` with 3 props:
+This HoC will provide `Component` with 4 props:
 
 `value`: The current value for the input  
-`setValue`: A callback function which replace the existing form value 
-`error`: The current error message associated with the input, or null
-`inputProps`: An object of meta values which are passed to all inputs within the form
+`setValue`: A callback function which replace the existing form value  
+`error`: The current error message associated with the input, or null  
+`inputProps`: An object of meta values which are passed to all inputs within the form  
 
 ```jsx
 const Input = ({ value, setValue, error, inputProps }) => (
@@ -80,7 +80,7 @@ more on this below.
 
 **Error Handling**
 
-By default, `react-form` does not provide any error handling. The second argument for the HoC `withFormHandling` or `onChange` is how you can declare validation rules for your components. `onChange` is expected to be either a single callback or an array of callbacks and will be called automatically by `react-form` everytime the provided `setValue` prop is called. The first arg `value` will be the next value while `props` will be all props passed to your wrapped component. This function when called sets the value of `error` on your behalf. Any error thrown by the `onChange` callback you provide will automatically be caught and passed to your component via the `error` prop.
+By default, `react-form` does not provide any error handling. The second argument for the HoC `withFormHandling` or `onChange` is how you can declare validation rules for your components. `onChange` is expected to be either a single callback or an array of callbacks and will be called automatically by `react-form` everytime the value changes. The first arg `value` will be the next value while `props` will be all props passed to your wrapped component. This function when called sets the value of `error` on your behalf. Any error thrown by the `onChange` callback you provide will automatically be caught and passed to your component via the `error` prop.
 
 ```jsx
 export default withFormHandling(Input, (value) => {
@@ -174,8 +174,8 @@ This callback function will be called anytime a submit event is fired within the
 
 **NOTE**: this callback is not currently supported for `react-native`, use the `onChange` callback instead.
 
-`formValid`: true or false based on all of the nested inputs' `error` props.
-`values`: All form values; structure is based on the value of nested inputs' `name` props.
+`formValid`: true or false based on all of the nested inputs' `error` props.  
+`values`: All form values; structure is based on the value of nested inputs' `name` props.  
 `resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
 
 For example, the following form:
@@ -206,8 +206,8 @@ could call your provided `onSubmit` callback with:
 
 This callback function will be called anytime a form value changes.
 
-`formValid`: true or false based on all of the nested inputs' `error` props.
-`values`: All form values; structure is based on the value of nested inputs' `name` props.
+`formValid`: true or false based on all of the nested inputs' `error` props.  
+`values`: All form values; structure is based on the value of nested inputs' `name` props.  
 `resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
 
 An example of what this might look like can be seen in the `onSubmit` section.
@@ -236,6 +236,8 @@ const CustomInput = ({ value, error, setValue, inputProps }) => (
 
 export default withFormHandling(CustomInput);
 ```
+
+**NOTE**: `react-form` does not perform any optimization on this prop. Guaranteeing referential equality of `inputProps` is the responsibility of the user.
 
 **Resetting Inputs**
 
