@@ -13,7 +13,8 @@ export const setValue = (state, { name, value }) => ({
     ...state.values,
     [name]: value
   },
-  triggerOnChange: true
+  triggerOnChange: random.generate(8),
+  changedFields: [name]
 });
 
 export const resetNamedInputs = (state, { names }) => {
@@ -37,26 +38,10 @@ export const resetNamedInputs = (state, { names }) => {
       ...state.keys,
       ...updatedKeys
     },
-    triggerOnChange: true
+    triggerOnChange: random.generate(8),
+    changedFields: names
   }
 };
-
-export const setDefault = (state, { name, defaultValue }) => ({
-  ...state,
-  values: {
-    ...state.values,
-    [name]: defaultValue
-  },
-  keys: {
-    ...state.keys,
-    [name]: hash()
-  },
-  defaults: {
-    ...state.defaults,
-    [name]: defaultValue
-  },
-  triggerOnChange: true
-});
 
 export const setError = (state, { name, error }) => {
   const errors = {
@@ -70,8 +55,36 @@ export const setError = (state, { name, error }) => {
     ...state,
     errors,
     formValid,
-    triggerOnChange: true
+    triggerOnChange: random.generate(8),
+    changedFields: [name]
   }
+};
+
+export const addKey = (state, { name, defaultValue, callback }) => {
+  const value = defaultValue;
+  const error = null;
+  const key = random.generate(8);
+  callback({ value, error, key });
+
+  return {
+    ...state,
+    values: {
+      ...state.values,
+      [name]: value
+    },
+    keys: {
+      ...state.keys,
+      [name]: key
+    },
+    defaults: {
+      ...state.defaults,
+      [name]: defaultValue
+    },
+    callbacks: {
+      ...state.callbacks,
+      [name]: callback
+    }
+  };
 };
 
 export const removeKey = (state, { name }) => {
@@ -79,19 +92,17 @@ export const removeKey = (state, { name }) => {
   const { [name]: removedDefault, ...defaults } = state.defaults;
   const { [name]: removedError, ...errors } = state.errors;
   const { [name]: removedKey, ...keys } = state.keys;
+  const { [name]: removedCallback, ...callbacks } = state.callbacks;
   const formValid = reduceErrors(errors);
 
   return {
     values,
     defaults,
     errors,
+    callbacks,
     formValid,
     keys,
-    triggerOnChange: true
+    triggerOnChange: random.generate(8),
+    changedFields: []
   };
 }
-
-export const unset = (state, { trigger }) => ({
-  ...state,
-  [trigger]: false
-});

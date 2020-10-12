@@ -14,7 +14,7 @@
     "@jbknowledge/react-dev": "^0.4.0"
   },
   "dependencies": {
-    "@jbknowledge/react-form": "file:../../",
+    "@jbknowledge/react-form": "file:../..",
     "@jbknowledge/react-models": "^0.1.0",
     "core-js": "^3.4.2",
     "moment": "2.24.0",

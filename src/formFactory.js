@@ -1,28 +1,32 @@
-import React, { useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 
 import { transposeKeys, useFormReducer, globMatch } from './util';
 import FormContext from './FormContext';
 
 const formFactory = (FormWrapper) => {
   const Form = ({ onSubmit, onChange, inputProps, children, ...remainingProps }) => {
+    const formValues = useRef({});
+    const formValid = useRef(false);
     const [form, dispatch] = useFormReducer();
+    formValues.current = form.values;
+    formValid.current = form.formValid;
 
     const updateSubscribers = useCallback(
       (callback) => {
-        const transposedValues = transposeKeys(form.values);
+        const transposedValues = transposeKeys(formValues.current);
 
         const resetInputs = (patterns = ['*']) => {
-          const names = globMatch(patterns, Object.keys(form.values));
+          const names = globMatch(patterns, Object.keys(formValues.current));
           dispatch.resetNamedInputs({ names });
         };
 
         callback({
-          formValid: form.formValid,
+          formValid: formValid.current,
           values: transposedValues,
           resetInputs
         });
       },
-      [dispatch, form.values, form.formValid]
+      [dispatch, formValues, formValid]
     );
 
     const handleOnSubmit = useCallback(
@@ -42,8 +46,7 @@ const formFactory = (FormWrapper) => {
       () => ({
         setValue: (name, value) => dispatch.setValue({ name, value }),
         setError: (name, error) => dispatch.setError({ name, error }),
-        setDefault: (name, defaultValue) =>
-          dispatch.setDefault({ name, defaultValue }),
+        addKey: (name, defaultValue, callback) => dispatch.addKey({ name, defaultValue, callback }),
         removeKey: (name) => dispatch.removeKey({ name })
       }),
       [dispatch]
@@ -51,21 +54,24 @@ const formFactory = (FormWrapper) => {
 
     const ctx = useMemo(
       () => ({
-        values: form.values,
-        errors: form.errors,
-        keys: form.keys,
         inputProps,
         ...handlers
       }),
-      [form.values, form.errors, form.keys, inputProps, handlers]
+      [inputProps, handlers]
     );
 
     useEffect(() => {
-      if (form.triggerOnChange) {
-        handleOnChange();
-        dispatch.unset({ trigger: 'triggerOnChange' });
-      }
-    }, [dispatch, form.triggerOnChange, handleOnChange]);
+      handleOnChange();
+      form.changedFields.forEach((name) => {
+        const value = form.values[name];
+        const error = form.errors[name];
+        const key = form.keys[name];
+        const callback = form.callbacks[name];
+        if (callback) {
+          callback({ value, error, key });
+        }
+      });
+    }, [dispatch, form.triggerOnChange, form.changedFields, handleOnChange]);
 
     return (
       <FormContext.Provider value={ctx}>

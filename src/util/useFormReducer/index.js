@@ -10,8 +10,10 @@ const useFormReducer = () => {
       defaults: {},
       keys: {},
       errors: {},
+      callbacks: {},
       formValid: false,
-      triggerOnChange: false
+      triggerOnChange: false,
+      changedFields: []
     }
   );
 

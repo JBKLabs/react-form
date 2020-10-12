@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback } from 'react';
+import React, { useEffect, useLayoutEffect, useContext, useCallback, useState } from 'react';
 
 import FormContext from './FormContext';
 
@@ -8,19 +8,15 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
   ...remainingProps
 }) => {
   const {
-    values,
     setValue,
-    errors,
     setError,
-    keys,
     inputProps,
-    setDefault,
+    addKey,
     removeKey
   } = useContext(FormContext);
-
-  const value = values[name] || '';
-  const error = errors[name] || null;
-  const key = keys[name] || name;
+  const [currentValue, setCurrentValue] = useState('');
+  const [currentError, setCurrentError] = useState(null);
+  const [currentKey, setCurrentKey] = useState();
 
   const setNamedValue = useCallback(
     (nextValue) => {
@@ -29,17 +25,23 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
     [name, setValue]
   );
 
-  useEffect(() => {
-    setDefault(name, defaultValue);
+  const onFieldUpdate = useCallback(({ value, error, key }) => {
+    setCurrentValue(value);
+    setCurrentError(error);
+    setCurrentKey(key);
+  },[setCurrentValue, setCurrentError, setCurrentKey]);
+
+  useLayoutEffect(() => {
+    addKey(name, defaultValue, onFieldUpdate);
     return () => removeKey(name);
-  }, [name, defaultValue, setDefault, removeKey]);
+  }, [name, defaultValue, addKey, removeKey]);
 
   useEffect(() => {
     try {
       if (typeof onFormChange === 'function') {
-        onFormChange(value, remainingProps);
+        onFormChange(currentValue, remainingProps);
       } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach(cb => cb(value, remainingProps));
+        onFormChange.forEach(cb => cb(currentValue, remainingProps));
       }
       setError(name, null);
     } catch (e) {
@@ -47,17 +49,17 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
       setError(name, message);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, inputProps]);
+  }, [name, currentValue, inputProps]);
 
   return (
     <FormInput
-      value={value}
-      error={error}
+      value={currentValue}
+      error={currentError}
       setValue={setNamedValue}
       name={name}
       inputProps={inputProps}
       {...remainingProps}
-      key={key}
+      key={currentKey}
     />
   );
 };

@@ -6,8 +6,6 @@ import { ValidationError, withFormHandling } from '@jbknowledge/react-form';
 const Input = ({ value, setValue, error, label }) => {
   const [blurred, setBlurred] = useState(false);
 
-  console.log('render', label);
-
   return (
     <Container>
       <Label>{label}</Label>
