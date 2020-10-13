@@ -1,6 +1,7 @@
-import React, { useEffect, useLayoutEffect, useContext, useCallback, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useContext, useCallback, useState, useRef } from 'react';
 
 import FormContext from './FormContext';
+import useFormField from './useFormField';
 
 const withFormHandling = (FormInput, onFormChange = () => { }) => ({
   name,
@@ -14,9 +15,36 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
     addKey,
     removeKey
   } = useContext(FormContext);
-  const [currentValue, setCurrentValue] = useState('');
-  const [currentError, setCurrentError] = useState(null);
-  const [currentKey, setCurrentKey] = useState();
+  const remainingPropsRef = useRef(remainingProps);
+  remainingPropsRef.current = remainingProps;
+
+  const computeError = useCallback((v) => {
+    try {
+      if (typeof onFormChange === 'function') {
+        onFormChange(v, remainingPropsRef.current);
+      } else if (Array.isArray(onFormChange)) {
+        onFormChange.forEach(cb => cb(v, remainingPropsRef.current));
+      }
+      return null;
+    } catch (e) {
+      const message = e.displayText || e;
+      return message;
+    }
+  }, [onFormChange, remainingPropsRef]);
+  
+  useLayoutEffect(() => {
+    const defaultError = computeError(defaultValue);
+    addKey(name, defaultValue, defaultError);
+    return () => removeKey(name);
+  }, [name, defaultValue, addKey, removeKey, computeError]);
+
+  const { value, error, key } = useFormField(name);
+
+  useEffect(() => {
+    const currentError = computeError(value);
+    setError(name, currentError);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, value, inputProps, setError]);
 
   const setNamedValue = useCallback(
     (nextValue) => {
@@ -25,41 +53,15 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
     [name, setValue]
   );
 
-  const onFieldUpdate = useCallback(({ value, error, key }) => {
-    setCurrentValue(value);
-    setCurrentError(error);
-    setCurrentKey(key);
-  },[setCurrentValue, setCurrentError, setCurrentKey]);
-
-  useLayoutEffect(() => {
-    addKey(name, defaultValue, onFieldUpdate);
-    return () => removeKey(name);
-  }, [name, defaultValue, addKey, removeKey]);
-
-  useEffect(() => {
-    try {
-      if (typeof onFormChange === 'function') {
-        onFormChange(currentValue, remainingProps);
-      } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach(cb => cb(currentValue, remainingProps));
-      }
-      setError(name, null);
-    } catch (e) {
-      const message = e.displayText || e;
-      setError(name, message);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, currentValue, inputProps]);
-
   return (
     <FormInput
-      value={currentValue}
-      error={currentError}
+      value={value}
+      error={error}
       setValue={setNamedValue}
       name={name}
       inputProps={inputProps}
       {...remainingProps}
-      key={currentKey}
+      key={key}
     />
   );
 };

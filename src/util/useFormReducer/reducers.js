@@ -5,15 +5,12 @@ const reduceErrors = (errors) => Object
   .filter(value => value !== undefined)
   .reduce((valid, nextError) => valid && nextError === null, true);
 
-const hash = () => random.generate(8);
-
 export const setValue = (state, { name, value }) => ({
   ...state,
   values: {
     ...state.values,
     [name]: value
   },
-  triggerOnChange: random.generate(8),
   changedFields: [name]
 });
 
@@ -38,7 +35,6 @@ export const resetNamedInputs = (state, { names }) => {
       ...state.keys,
       ...updatedKeys
     },
-    triggerOnChange: random.generate(8),
     changedFields: names
   }
 };
@@ -55,16 +51,16 @@ export const setError = (state, { name, error }) => {
     ...state,
     errors,
     formValid,
-    triggerOnChange: random.generate(8),
     changedFields: [name]
   }
 };
 
-export const addKey = (state, { name, defaultValue, callback }) => {
+export const addKey = (state, { name, defaultValue, defaultError, emitter }) => {
   const value = defaultValue;
-  const error = null;
+  const error = defaultError;
   const key = random.generate(8);
-  callback({ value, error, key });
+
+  emitter.emit(`register:${name}`, { value, error, key });
 
   return {
     ...state,
@@ -76,14 +72,14 @@ export const addKey = (state, { name, defaultValue, callback }) => {
       ...state.keys,
       [name]: key
     },
+    errors: {
+      [name]: error
+    },
     defaults: {
       ...state.defaults,
       [name]: defaultValue
     },
-    callbacks: {
-      ...state.callbacks,
-      [name]: callback
-    }
+    identity: random.generate(8)
   };
 };
 
@@ -92,17 +88,14 @@ export const removeKey = (state, { name }) => {
   const { [name]: removedDefault, ...defaults } = state.defaults;
   const { [name]: removedError, ...errors } = state.errors;
   const { [name]: removedKey, ...keys } = state.keys;
-  const { [name]: removedCallback, ...callbacks } = state.callbacks;
   const formValid = reduceErrors(errors);
 
   return {
     values,
     defaults,
     errors,
-    callbacks,
     formValid,
     keys,
-    triggerOnChange: random.generate(8),
     changedFields: []
   };
 }
