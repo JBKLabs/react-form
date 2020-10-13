@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import FormContext from './FormContext';
 
 const useFormField = (name) => {
-    const { emitter, getField } = useContext(FormContext);
+    const { emitter, getField, setValue, setError } = useContext(FormContext);
     const [state, setState] = useState(getField(name));
 
     useEffect(() => {
@@ -16,7 +16,14 @@ const useFormField = (name) => {
         };
     }, [name, emitter]);
 
-    return state;
+    const setNamedValue = useCallback((value) => setValue(name, value), [name]);
+    const setNamedError = useCallback((error) => setError(name, error), [name]);
+
+    return {
+        ...state,
+        setValue: setNamedValue,
+        setError: setNamedError
+    };
 };
 
 export default useFormField;

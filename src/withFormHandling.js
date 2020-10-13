@@ -9,8 +9,6 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
   ...remainingProps
 }) => {
   const {
-    setValue,
-    setError,
     inputProps,
     addKey,
     removeKey
@@ -38,26 +36,20 @@ const withFormHandling = (FormInput, onFormChange = () => { }) => ({
     return () => removeKey(name);
   }, [name, defaultValue, addKey, removeKey, computeError]);
 
-  const { value, error, key } = useFormField(name);
+  const { value, error, key, setValue, setError } = useFormField(name);
 
   useEffect(() => {
     const currentError = computeError(value);
-    setError(name, currentError);
+    setError(currentError);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, value, inputProps, setError]);
-
-  const setNamedValue = useCallback(
-    (nextValue) => {
-      setValue(name, nextValue);
-    },
-    [name, setValue]
-  );
 
   return (
     <FormInput
       value={value}
       error={error}
-      setValue={setNamedValue}
+      setError={setError}
+      setValue={setValue}
       name={name}
       inputProps={inputProps}
       {...remainingProps}
