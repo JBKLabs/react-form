@@ -11,7 +11,6 @@ const useFormReducer = () => {
       keys: {},
       errors: {},
       formValid: false,
-      triggerOnChange: false,
       changedFields: []
     }
   );

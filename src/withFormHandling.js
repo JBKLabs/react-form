@@ -1,35 +1,40 @@
-import React, { useEffect, useLayoutEffect, useContext, useCallback, useState, useRef } from 'react';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useContext,
+  useCallback,
+  useRef
+} from 'react';
 
 import FormContext from './FormContext';
 import useFormField from './useFormField';
 
-const withFormHandling = (FormInput, onFormChange = () => { }) => ({
+const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   name,
   defaultValue = '',
   ...remainingProps
 }) => {
-  const {
-    inputProps,
-    addKey,
-    removeKey
-  } = useContext(FormContext);
+  const { inputProps, addKey, removeKey } = useContext(FormContext);
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
 
-  const computeError = useCallback((v) => {
-    try {
-      if (typeof onFormChange === 'function') {
-        onFormChange(v, remainingPropsRef.current);
-      } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach(cb => cb(v, remainingPropsRef.current));
+  const computeError = useCallback(
+    (val) => {
+      try {
+        if (typeof onFormChange === 'function') {
+          onFormChange(val, remainingPropsRef.current);
+        } else if (Array.isArray(onFormChange)) {
+          onFormChange.forEach((cb) => cb(val, remainingPropsRef.current));
+        }
+        return null;
+      } catch (e) {
+        const message = e.displayText || e;
+        return message;
       }
-      return null;
-    } catch (e) {
-      const message = e.displayText || e;
-      return message;
-    }
-  }, [onFormChange, remainingPropsRef]);
-  
+    },
+    [remainingPropsRef]
+  );
+
   useLayoutEffect(() => {
     const defaultError = computeError(defaultValue);
     addKey(name, defaultValue, defaultError);

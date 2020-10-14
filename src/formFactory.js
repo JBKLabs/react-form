@@ -1,11 +1,17 @@
-import React, { useMemo, useCallback, useEffect, useRef, useLayoutEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import EventEmitter from 'eventemitter3';
 
 import { transposeKeys, useFormReducer, globMatch } from './util';
 import FormContext from './FormContext';
 
 const formFactory = (FormWrapper) => {
-  const Form = ({ onSubmit, onChange, inputProps, children, ...remainingProps }) => {
+  const Form = ({
+    onSubmit,
+    onChange,
+    inputProps,
+    children,
+    ...remainingProps
+  }) => {
     const emitter = useRef(new EventEmitter());
     const formRef = useRef({});
     const [form, dispatch] = useFormReducer();
@@ -16,7 +22,10 @@ const formFactory = (FormWrapper) => {
         const transposedValues = transposeKeys(formRef.current.values);
 
         const resetInputs = (patterns = ['*']) => {
-          const names = globMatch(patterns, Object.keys(formRef.current.values));
+          const names = globMatch(
+            patterns,
+            Object.keys(formRef.current.values)
+          );
           dispatch.resetNamedInputs({ names });
         };
 
@@ -46,7 +55,13 @@ const formFactory = (FormWrapper) => {
       () => ({
         setValue: (name, value) => dispatch.setValue({ name, value }),
         setError: (name, error) => dispatch.setError({ name, error }),
-        addKey: (name, defaultValue, defaultError) => dispatch.addKey({ name, defaultValue, defaultError, emitter: emitter.current }),
+        addKey: (name, defaultValue, defaultError) =>
+          dispatch.addKey({
+            name,
+            defaultValue,
+            defaultError,
+            emitter: emitter.current
+          }),
         removeKey: (name) => dispatch.removeKey({ name }),
         getField: (name) => ({
           value: formRef.current.values[name],
