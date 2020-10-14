@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useLayoutEffect,
-  useContext,
-  useCallback,
-  useRef
-} from 'react';
+import React, { useEffect, useContext, useCallback, useRef } from 'react';
 
 import FormContext from './FormContext';
 import useFormField from './useFormField';
@@ -14,7 +8,7 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   defaultValue = '',
   ...remainingProps
 }) => {
-  const { inputProps, addKey, removeKey } = useContext(FormContext);
+  const { inputProps } = useContext(FormContext);
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
 
@@ -35,19 +29,16 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
     [remainingPropsRef]
   );
 
-  useLayoutEffect(() => {
-    const defaultError = computeError(defaultValue);
-    addKey(name, defaultValue, defaultError);
-    return () => removeKey(name);
-  }, [name, defaultValue, addKey, removeKey, computeError]);
-
-  const { value, error, key, setValue, setError } = useFormField(name);
+  const { value, error, key, setValue, setError } = useFormField(name, {
+    registerInput: true,
+    defaultValue,
+    initialError: computeError(defaultValue)
+  });
 
   useEffect(() => {
     const currentError = computeError(value);
     setError(currentError);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [name, value, inputProps, setError]);
+  }, [computeError, value, setError]);
 
   return (
     <FormInput

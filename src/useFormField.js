@@ -1,10 +1,37 @@
-import { useCallback, useContext, useEffect, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useState
+} from 'react';
 
 import FormContext from './FormContext';
 
-const useFormField = (name) => {
-  const { emitter, getField, setValue, setError } = useContext(FormContext);
+const useFormField = (name, options = {}) => {
+  const {
+    emitter,
+    getField,
+    setValue,
+    setError,
+    addKey,
+    removeKey
+  } = useContext(FormContext);
   const [state, setState] = useState(getField(name));
+
+  const {
+    registerInput = false,
+    defaultValue = '',
+    initialError = null
+  } = options;
+
+  useLayoutEffect(() => {
+    if (registerInput) {
+      addKey(name, defaultValue, initialError);
+      return () => removeKey(name);
+    }
+    return null;
+  }, [name, registerInput, defaultValue, initialError, addKey, removeKey]);
 
   useEffect(() => {
     const registerEvent = `register:${name}`;
@@ -21,6 +48,7 @@ const useFormField = (name) => {
     name,
     setValue
   ]);
+
   const setNamedError = useCallback((error) => setError(name, error), [
     name,
     setError

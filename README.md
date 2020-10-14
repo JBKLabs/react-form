@@ -45,6 +45,7 @@ This library exports the following:
 * `withFormHandling`
 * `Form`
 * `ValidationError`
+* `useFormField`
 
 **withFormHandling(Component, onChange)**
 
@@ -266,6 +267,82 @@ Given the following form:
 * `resetInputs(['address.*'])` will reset the value of all inputs **except** `username` back to empty strings
 
 * `resetInputs()` which is the same as `resetInputs(['*'])` will reset all inputs back to their default values
+
+**useFormField(name, options)**
+
+As an alternative to `withFormHandling`, you can utilize `useFormField` to connect an input to the overall form. i.e.
+
+```jsx
+const MyInput = ({ name, defaultValue }) => {
+  const { value, error, key, setValue, setError } = useFormField(name, {
+    registerInput: true,
+    defaultValue,
+    initialError: null
+  });
+
+  useEffect(() => {
+    setError(valid ? null : 'invalid');
+  }, [setError, value]);
+
+  return (
+    <>
+      <input 
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      {error && <span>{error}</span>}
+    </>
+  );
+};
+```
+
+Options:
+* `registerInput` (boolean)
+  * default value is `false`
+  * if `true`, then this is considered an "active" input, which means if this component unmounts, then the value/error for that input is fully removed from the Form
+  * if `false`, then unmounting of the component will **not** destroy the value from the Form. This is intended to allow components to subscribe to changes to a specific field
+  * if `false`, then all other options are irrelevant
+* `defaultValue` (any)
+  * default form input value, defaults to an empty string
+  * only used if `registerInput` is `true`
+* `initialError` (any)
+  * initial form error, defaults to `null`
+  * only used if `registerInput` is `true`
+
+Confirm password input example:
+
+```jsx
+const ConfirmPasswordInput = () => {
+  const password = useFormField('password');
+  const { value, error, key, setValue, setError } = useFormField('confirmPassword', {
+    registerInput: true,
+    defaultValue: '',
+    initialError: new ValidationError('required')
+  });
+
+  useEffect(() => {
+    if (!!value) {
+      setError(new ValidationError('required'));
+    } else if (password.error) {
+      setError(new ValidationError('password is too weak'));
+    } else if (value !== password.value) {
+      setError(new ValidationError('does not match'));
+    } else {
+      setError(null);
+    }
+  }, [setError, value, password.value, password.error]);
+
+  return (
+    <>
+      <input 
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      {error && <span>{error.displayText}</span>}
+    </>
+  );
+};
+```
 
 
 ## Contributors

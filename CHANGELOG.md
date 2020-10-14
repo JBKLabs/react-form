@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+### Added
+- `useFormField` hook which returns the current value, error, and key for the input with the provided name ([#31](https://github.com/JBKLabs/react-form/issues/31))
+
+### Fixed
+- issue where all inputs rerender anytime a single input value changes ([#31](https://github.com/JBKLabs/react-form/issues/31))
+
 ## [0.2.0] - 2019-10-02
 ### Added
 - `@jbk/react-form/native` module export for react native development

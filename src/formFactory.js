@@ -55,7 +55,7 @@ const formFactory = (FormWrapper) => {
       () => ({
         setValue: (name, value) => dispatch.setValue({ name, value }),
         setError: (name, error) => dispatch.setError({ name, error }),
-        addKey: (name, defaultValue, defaultError) =>
+        addKey: (name, defaultValue, defaultError = null) =>
           dispatch.addKey({
             name,
             defaultValue,
