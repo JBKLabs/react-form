@@ -27,7 +27,7 @@ const formFactory = (FormWrapper) => {
             patterns,
             Object.keys(formRef.current.fields)
           );
-          dispatch.resetNamedFields({names});
+          dispatch.resetNamedFields({ names });
         };
 
         const revalidateInputs = (patterns = ['*']) => {
@@ -35,8 +35,8 @@ const formFactory = (FormWrapper) => {
             patterns,
             Object.keys(formRef.current.fields)
           );
-          dispatch.revalidateNamedFields({names});
-        }
+          dispatch.revalidateNamedFields({ names });
+        };
 
         const eventContext = {
           formValid: formRef.current.formValid,
@@ -46,7 +46,7 @@ const formFactory = (FormWrapper) => {
         };
 
         if (includePrevValues) {
-          eventContext.prevValues = prevTransposedValues.current
+          eventContext.prevValues = prevTransposedValues.current;
         }
 
         callback(eventContext);
@@ -63,17 +63,18 @@ const formFactory = (FormWrapper) => {
       [updateSubscribers, onSubmit]
     );
 
-    const handleOnChange = useCallback(() => updateSubscribers(onChange, true), [
-      onChange,
-      updateSubscribers,
-    ]);
+    const handleOnChange = useCallback(
+      () => updateSubscribers(onChange, true),
+      [onChange, updateSubscribers]
+    );
 
     const handlers = useMemo(
       () => ({
         registerField: dispatch.registerField,
         removeField: dispatch.removeField,
         updateField: dispatch.updateField,
-        getField: (name) => formRef.current.fields[name] || { value: '', error: null, key: null },
+        getField: (name) =>
+          formRef.current.fields[name] || { value: '', error: null, key: null },
         emitter
       }),
       [dispatch, emitter, formRef]

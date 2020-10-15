@@ -1,7 +1,6 @@
 import {
   useCallback,
   useContext,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState
@@ -12,7 +11,9 @@ import FormContext from './FormContext';
 const noop = () => null;
 
 const useFormField = (name, options = {}) => {
-  const { registerField, updateField, removeField, emitter } = useContext(FormContext);
+  const { registerField, updateField, removeField, emitter } = useContext(
+    FormContext
+  );
   const [state, setState] = useState({ value: '', error: null, key: '' });
   const defaultValue = options.defaultValue || '';
   const validateValueRef = useRef(noop);
@@ -25,11 +26,22 @@ const useFormField = (name, options = {}) => {
       emitter.removeListener(name, setState);
       removeField({ name });
     };
-  }, [name, defaultValue, validateValueRef, emitter, registerField, setState]);
+  }, [
+    name,
+    defaultValue,
+    validateValueRef,
+    emitter,
+    registerField,
+    setState,
+    removeField
+  ]);
 
-  const setValue = useCallback((value) => {
-    updateField({ name, value });
-  }, [name, updateField]);
+  const setValue = useCallback(
+    (value) => {
+      updateField({ name, value });
+    },
+    [name, updateField]
+  );
 
   return { ...state, setValue };
 };

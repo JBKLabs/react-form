@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, useRef, useState } from 'react';
+import React, { useContext, useCallback, useRef } from 'react';
 
 import FormContext from './FormContext';
 import useFormField from './useFormField';
@@ -12,14 +12,16 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
 
-  const validateValue = useCallback((value) => {
-    if (typeof onFormChange === 'function') {
-      onFormChange(value, remainingPropsRef.current);
-    } else if (Array.isArray(onFormChange)) {
-      onFormChange.forEach((cb) => cb(value, remainingPropsRef.current));
-    }
-  }, [remainingPropsRef, onFormChange]);
-
+  const validateValue = useCallback(
+    (value) => {
+      if (typeof onFormChange === 'function') {
+        onFormChange(value, remainingPropsRef.current);
+      } else if (Array.isArray(onFormChange)) {
+        onFormChange.forEach((cb) => cb(value, remainingPropsRef.current));
+      }
+    },
+    [remainingPropsRef]
+  );
 
   const field = useFormField(name, { defaultValue, validateValue });
 
