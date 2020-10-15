@@ -1,3 +1,4 @@
+
 const expand = (obj, keys, value) => {
   if (keys.length === 1) {
     return { [keys[0]]: value};
@@ -17,7 +18,7 @@ const transposeKeys = (raw) => {
     .keys(raw)
     .reduce((obj, key) => ({
       ...obj,
-      ...expand(obj, key.split('.'), raw[key])
+      ...expand(obj, key.split('.'), raw[key].value)
     }), {})
 
   return transposed;

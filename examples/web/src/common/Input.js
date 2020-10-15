@@ -33,7 +33,9 @@ Input.propTypes = {
   label: PropTypes.string
 };
 
-export default withFormHandling(Input, onFormChange);
+const WrappedInput = withFormHandling(Input, onFormChange);
+WrappedInput.Controlled = Input;
+export default WrappedInput;
 
 const Container = styled.div`
   padding-bottom: 10px;

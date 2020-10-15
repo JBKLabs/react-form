@@ -3,62 +3,35 @@ import {
   useContext,
   useEffect,
   useLayoutEffect,
+  useRef,
   useState
 } from 'react';
 
 import FormContext from './FormContext';
 
-const useFormField = (name, options = {}) => {
-  const {
-    emitter,
-    getField,
-    setValue,
-    setError,
-    addKey,
-    removeKey
-  } = useContext(FormContext);
-  const [state, setState] = useState(getField(name));
+const noop = () => null;
 
-  const {
-    registerInput = false,
-    defaultValue = '',
-    initialError = null
-  } = options;
+const useFormField = (name, options = {}) => {
+  const { registerField, updateField, removeField, emitter } = useContext(FormContext);
+  const [state, setState] = useState({ value: '', error: null, key: '' });
+  const defaultValue = options.defaultValue || '';
+  const validateValueRef = useRef(noop);
+  validateValueRef.current = options.validateValue || noop;
 
   useLayoutEffect(() => {
-    if (registerInput) {
-      addKey(name, defaultValue, initialError);
-      return () => removeKey(name);
-    }
-    return null;
-  }, [name, registerInput, defaultValue, initialError, addKey, removeKey]);
-
-  useEffect(() => {
-    const registerEvent = `register:${name}`;
-    const updateEvent = `field:${name}`;
-    emitter.addListener(registerEvent, setState);
-    emitter.addListener(updateEvent, setState);
+    registerField({ name, defaultValue, validateValueRef, onInit: setState });
+    emitter.addListener(name, setState);
     return () => {
-      emitter.removeListener(registerEvent, setState);
-      emitter.removeListener(updateEvent, setState);
+      emitter.removeListener(name, setState);
+      removeField({ name });
     };
-  }, [name, emitter]);
+  }, [name, defaultValue, validateValueRef, emitter, registerField, setState]);
 
-  const setNamedValue = useCallback((value) => setValue(name, value), [
-    name,
-    setValue
-  ]);
+  const setValue = useCallback((value) => {
+    updateField({ name, value });
+  }, [name, updateField]);
 
-  const setNamedError = useCallback((error) => setError(name, error), [
-    name,
-    setError
-  ]);
-
-  return {
-    ...state,
-    setValue: setNamedValue,
-    setError: setNamedError
-  };
+  return { ...state, setValue };
 };
 
 export default useFormField;

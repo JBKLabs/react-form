@@ -1,4 +1,4 @@
-import React, { useEffect, useContext, useCallback, useRef } from 'react';
+import React, { useEffect, useContext, useCallback, useRef, useState } from 'react';
 
 import FormContext from './FormContext';
 import useFormField from './useFormField';
@@ -12,44 +12,26 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
 
-  const computeError = useCallback(
-    (val) => {
-      try {
-        if (typeof onFormChange === 'function') {
-          onFormChange(val, remainingPropsRef.current);
-        } else if (Array.isArray(onFormChange)) {
-          onFormChange.forEach((cb) => cb(val, remainingPropsRef.current));
-        }
-        return null;
-      } catch (e) {
-        const message = e.displayText || e;
-        return message;
-      }
-    },
-    [remainingPropsRef]
-  );
+  const validateValue = useCallback((value) => {
+    if (typeof onFormChange === 'function') {
+      onFormChange(value, remainingPropsRef.current);
+    } else if (Array.isArray(onFormChange)) {
+      onFormChange.forEach((cb) => cb(value, remainingPropsRef.current));
+    }
+  }, [remainingPropsRef, onFormChange]);
 
-  const { value, error, key, setValue, setError } = useFormField(name, {
-    registerInput: true,
-    defaultValue,
-    initialError: computeError(defaultValue)
-  });
 
-  useEffect(() => {
-    const currentError = computeError(value);
-    setError(currentError);
-  }, [computeError, value, setError]);
+  const field = useFormField(name, { defaultValue, validateValue });
 
   return (
     <FormInput
-      value={value}
-      error={error}
-      setError={setError}
-      setValue={setValue}
+      key={field.key}
+      value={field.value}
+      error={field.error}
+      setValue={field.setValue}
       name={name}
       inputProps={inputProps}
       {...remainingProps}
-      key={key}
     />
   );
 };

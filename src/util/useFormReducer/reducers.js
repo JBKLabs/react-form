@@ -1,101 +1,111 @@
 import random from 'randomstring';
 
-const reduceErrors = (errors) => Object
-  .values(errors)
-  .filter(value => value !== undefined)
-  .reduce((valid, nextError) => valid && nextError === null, true);
+const isFormValid = (fields) => Object
+  .keys(fields)
+  .reduce((valid, name) => valid && fields[name].error === null, true);
 
-export const setValue = (state, { name, value }) => ({
-  ...state,
-  values: {
-    ...state.values,
-    [name]: value
-  },
-  changedFields: [name]
-});
+export const registerField = (emitter, state, action) => {
+  const validateValue = (value) => {
+    try {
+      const result = action.validateValueRef.current(value);
+      return result || null;
+    } catch (e) {
+      return e.displayText || e;
+    }
+  };
+  const defaultValue = action.defaultValue;
+  const initialError = validateValue(defaultValue);
+  const register = { validateValue, defaultValue, initialError };
 
-export const resetNamedInputs = (state, { names }) => {
-  const updatedValues = names.reduce((obj, name) => ({
-    ...obj,
-    [name]: state.defaults[name]
-  }), {});
-
-  const updatedKeys = names.reduce((obj, name) => ({
-    ...obj,
-    [name]: random.generate(8)
-  }), {});
-
-  return {
-    ...state,
-    values: {
-      ...state.values,
-      ...updatedValues
-    },
-    keys: {
-      ...state.keys,
-      ...updatedKeys
-    },
-    changedFields: names
-  }
-};
-
-export const setError = (state, { name, error }) => {
-  const errors = {
-    ...state.errors,
-    [name]: error
+  const field = { 
+    value: action.defaultValue, 
+    error: register.initialError,
+    key: random.generate(8)
   };
 
-  const formValid = reduceErrors(errors);
+  emitter.emit(action.name, field);
+  const fields = {
+    ...state.fields,
+    [action.name]: field
+  };
 
   return {
     ...state,
-    errors,
-    formValid,
-    changedFields: [name]
+    fields,
+    registry: {
+      ...state.registry,
+      [action.name]: register
+    },
+    formValid: isFormValid(fields)
   }
 };
 
-export const addKey = (state, { name, defaultValue, defaultError, emitter }) => {
-  const value = defaultValue;
-  const error = defaultError;
-  const key = random.generate(8);
+export const removeField = (_, state, { name }) => {
+  const { [name]: removedField, ...fields } = state.fields;
+  const { [name]: removedRegistration, ...registry } = state.registry;
+  const formValid = isFormValid(fields);
+  return {
+    ...state,
+    fields,
+    registry,
+    formValid
+  };
+};
 
-  emitter.emit(`register:${name}`, { value, error, key });
+export const updateField = (emitter, state, action) => {
+  const value = action.value;
+  const error = state.registry[action.name].validateValue(value);
+  const field = { ...state.fields[action.name], value, error };
+
+  emitter.emit(action.name, field);
+  const fields = {
+    ...state.fields,
+    [action.name]: field
+  };
 
   return {
     ...state,
-    values: {
-      ...state.values,
-      [name]: value
-    },
-    keys: {
-      ...state.keys,
-      [name]: key
-    },
-    errors: {
-      [name]: error
-    },
-    defaults: {
-      ...state.defaults,
-      [name]: defaultValue
-    },
+    fields,
+    formValid: isFormValid(fields),
     identity: random.generate(8)
   };
 };
 
-export const removeKey = (state, { name }) => {
-  const { [name]: removeValue, ...values } = state.values;
-  const { [name]: removedDefault, ...defaults } = state.defaults;
-  const { [name]: removedError, ...errors } = state.errors;
-  const { [name]: removedKey, ...keys } = state.keys;
-  const formValid = reduceErrors(errors);
+export const resetNamedFields = (emitter, state, { names }) => {
+  const fields = { ...state.fields };
+  names.forEach((name) => {
+    fields[name] = {
+      value: state.registry[name].defaultValue,
+      error: state.registry[name].initialError,
+      key: random.generate(8)
+    };
+    
+    emitter.emit(name, fields[name]);
+  });
 
   return {
-    values,
-    defaults,
-    errors,
-    formValid,
-    keys,
-    changedFields: []
+    ...state,
+    fields,
+    formValid: isFormValid(fields),
+    identity: random.generate(8)
   };
-}
+};
+
+export const revalidateNamedFields = (emitter, state, { names }) => {
+  const fields = { ...state.fields };
+  names.forEach((name) => {
+    fields[name] = {
+      ...state.fields[name],
+      error: state.registry[name].validateValue(state.fields[name].value)
+    };
+    
+    emitter.emit(name, fields[name]);
+  });
+
+  return {
+    ...state,
+    fields,
+    formValid: isFormValid(fields),
+    identity: random.generate(8)
+  };
+};

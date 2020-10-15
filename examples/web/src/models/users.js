@@ -13,7 +13,8 @@ export default {
     addUserAsync: async (user) => {
       dispatch.users.setUser({
         id: uuid(),
-        ...user
+        firstName: user.name.first,
+        lastName: user.name.lastName
       });
     }
   })
