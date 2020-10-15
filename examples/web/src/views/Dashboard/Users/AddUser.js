@@ -36,12 +36,9 @@ const AddUser = ({ addUserAsync }) => (
         resetInputs();
       }
     }}
-    onChange={({ values, prevValues, revalidateInputs }) => {
-      if (
-        prevValues.password !== values.password ||
-        prevValues.confirmPassword !== values.confirmPassword
-      ) {
-        revalidateInputs(['password', 'confirmPassword']);
+    onChange={({ changedFields, revalidateInputs }) => {
+      if (changedFields.has('password')) {
+        revalidateInputs(['confirmPassword']);
       }
     }}
   >

@@ -12,12 +12,11 @@ const formFactory = (FormWrapper) => {
     ...remainingProps
   }) => {
     const formRef = useRef({});
-    const prevTransposedValues = useRef({});
     const [form, dispatch, emitter] = useFormReducer();
     formRef.current = form;
 
     const updateSubscribers = useCallback(
-      (callback, includePrevValues) => {
+      (callback, includeChanges) => {
         if (!callback) return;
 
         const transposedValues = transposeKeys(formRef.current.fields);
@@ -45,28 +44,23 @@ const formFactory = (FormWrapper) => {
           revalidateInputs
         };
 
-        if (includePrevValues) {
-          eventContext.prevValues = prevTransposedValues.current;
+        if (includeChanges) {
+          eventContext.changedFields = formRef.current.changedFields;
         }
 
         callback(eventContext);
-        prevTransposedValues.current = transposedValues;
       },
-      [dispatch, formRef, prevTransposedValues]
+      [dispatch, formRef]
     );
 
-    const handleOnSubmit = useCallback(
-      (e) => {
-        e.preventDefault();
-        updateSubscribers(onSubmit, false);
-      },
-      [updateSubscribers, onSubmit]
-    );
+    const handleOnSubmit = useRef();
+    handleOnSubmit.current = (e) => {
+      e.preventDefault();
+      updateSubscribers(onSubmit, false);
+    };
 
-    const handleOnChange = useCallback(
-      () => updateSubscribers(onChange, true),
-      [onChange, updateSubscribers]
-    );
+    const handleOnChange = useRef();
+    handleOnChange.current = () => updateSubscribers(onChange, true);
 
     const handlers = useMemo(
       () => ({
@@ -89,11 +83,11 @@ const formFactory = (FormWrapper) => {
       [inputProps, form.formValid, handlers]
     );
 
-    useEffect(handleOnChange, [handleOnChange, form.identity]);
+    useEffect(handleOnChange.current, [handleOnChange, form.changedFields]);
 
     return (
       <FormContext.Provider value={ctx}>
-        <FormWrapper onSubmit={handleOnSubmit} {...remainingProps}>
+        <FormWrapper onSubmit={handleOnSubmit.current} {...remainingProps}>
           {children}
         </FormWrapper>
       </FormContext.Provider>

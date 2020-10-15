@@ -14,12 +14,11 @@ export const registerField = (emitter, state, action) => {
     }
   };
   const defaultValue = action.defaultValue;
-  const initialError = validateValue(defaultValue);
-  const register = { validateValue, defaultValue, initialError };
+  const register = { validateValue, defaultValue };
 
   const field = { 
     value: action.defaultValue, 
-    error: register.initialError,
+    error: validateValue(defaultValue),
     key: random.generate(8)
   };
 
@@ -36,7 +35,8 @@ export const registerField = (emitter, state, action) => {
       ...state.registry,
       [action.name]: register
     },
-    formValid: isFormValid(fields)
+    formValid: isFormValid(fields),
+    changedFields: new Set(Object.keys(fields))
   }
 };
 
@@ -67,19 +67,19 @@ export const updateField = (emitter, state, action) => {
     ...state,
     fields,
     formValid: isFormValid(fields),
-    identity: random.generate(8)
+    changedFields: new Set([action.name])
   };
 };
 
 export const resetNamedFields = (emitter, state, { names }) => {
   const fields = { ...state.fields };
   names.forEach((name) => {
-    fields[name] = {
-      value: state.registry[name].defaultValue,
-      error: state.registry[name].initialError,
-      key: random.generate(8)
-    };
-    
+    const value = state.registry[name].defaultValue;
+    const error = state.registry[name].validateValue(value);
+    const key = random.generate(8);
+
+    fields[name] = { value, error, key };
+
     emitter.emit(name, fields[name]);
   });
 
@@ -87,7 +87,7 @@ export const resetNamedFields = (emitter, state, { names }) => {
     ...state,
     fields,
     formValid: isFormValid(fields),
-    identity: random.generate(8)
+    changedFields: new Set(names)
   };
 };
 
@@ -106,6 +106,6 @@ export const revalidateNamedFields = (emitter, state, { names }) => {
     ...state,
     fields,
     formValid: isFormValid(fields),
-    identity: random.generate(8)
+    changedFields: new Set(names)
   };
 };

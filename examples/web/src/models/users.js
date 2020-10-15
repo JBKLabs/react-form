@@ -14,7 +14,7 @@ export default {
       dispatch.users.setUser({
         id: uuid(),
         firstName: user.name.first,
-        lastName: user.name.lastName
+        lastName: user.name.last
       });
     }
   })

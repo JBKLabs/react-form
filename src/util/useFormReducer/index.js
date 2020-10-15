@@ -11,7 +11,7 @@ const useFormReducer = () => {
       fields: {},
       registry: {},
       formValid: false,
-      identity: 'init'
+      changedFields: new Set()
     }
   );
 
