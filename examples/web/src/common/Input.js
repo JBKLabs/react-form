@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import { ValidationError, withFormHandling } from '@jbknowledge/react-form';
 
-const Input = ({ value, setValue, error, label }) => {
+const Input = ({ value, setValue, error, label, inputProps }) => {
   const [blurred, setBlurred] = useState(false);
 
   return (
@@ -14,14 +14,19 @@ const Input = ({ value, setValue, error, label }) => {
         onChange={(e) => setValue(e.target.value)}
         onBlur={() => setBlurred(true)}
         className={error && blurred ? 'error' : ''}
+        {...inputProps}
       />
       {error && blurred && <Error>{error}</Error>}
     </Container>
   );
 };
 
-const onFormChange = (value, { regex, defaultErrorMessage }) => {
-  if (!value.match(regex)) {
+const onFormChange = (value, props, getFormField) => {
+  const { customValidation, regex, defaultErrorMessage } = props;
+
+  if (customValidation && typeof customValidation === 'function') {
+    customValidation(value, props, getFormField);
+  } else if (regex && !value.match(regex)) {
     throw new ValidationError(defaultErrorMessage);
   }
 };
@@ -30,7 +35,8 @@ Input.propTypes = {
   value: PropTypes.string,
   setValue: PropTypes.func,
   error: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
+  inputProps: PropTypes.shape({})
 };
 
 const WrappedInput = withFormHandling(Input, onFormChange);

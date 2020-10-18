@@ -1,19 +1,15 @@
 import {
   useCallback,
-  useContext,
   useLayoutEffect,
   useRef,
   useState
 } from 'react';
-
-import FormContext from './FormContext';
+import useFormContext from './useFormContext';
 
 const noop = () => null;
 
 const useFormField = (name, options = {}) => {
-  const { registerField, updateField, removeField, emitter } = useContext(
-    FormContext
-  );
+  const { registerField, updateField, removeField, emitter } = useFormContext();
   const [state, setState] = useState({ value: '', error: null, key: '' });
   const defaultValue = options.defaultValue || '';
   const validateValueRef = useRef(noop);

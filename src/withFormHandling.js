@@ -1,26 +1,31 @@
-import React, { useContext, useCallback, useRef } from 'react';
+import React, { useCallback, useRef } from 'react';
 
-import FormContext from './FormContext';
 import useFormField from './useFormField';
+import useFormContext from './useFormContext';
 
 const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   name,
   defaultValue = '',
   ...remainingProps
 }) => {
-  const { inputProps } = useContext(FormContext);
+  const { inputProps, getField } = useFormContext();
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
+
+  const getFormField = useCallback((name) => {
+    const { value, error } = getField(name);
+    return { value, error };
+  }, [getField]);
 
   const validateValue = useCallback(
     (value) => {
       if (typeof onFormChange === 'function') {
-        onFormChange(value, remainingPropsRef.current);
+        onFormChange(value, remainingPropsRef.current, getFormField);
       } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach((cb) => cb(value, remainingPropsRef.current));
+        onFormChange.forEach((cb) => cb(value, remainingPropsRef.current, getFormField));
       }
     },
-    [remainingPropsRef]
+    [remainingPropsRef, getFormField]
   );
 
   const field = useFormField(name, { defaultValue, validateValue });

@@ -1,9 +1,8 @@
-import { useContext, useLayoutEffect, useState } from 'react';
-
-import FormContext from './FormContext';
+import { useLayoutEffect, useState } from 'react';
+import useFormContext from './useFormContext';
 
 const useFormState = (name) => {
-  const { emitter, formValid, getField } = useContext(FormContext);
+  const { emitter, formValid, getField } = useFormContext();
   const [state, setState] = useState(getField(name));
 
   useLayoutEffect(() => {
