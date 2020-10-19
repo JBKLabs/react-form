@@ -40,7 +40,7 @@ export const registerField = (emitter, state, action) => {
   }
 };
 
-export const removeField = (_, state, { name }) => {
+export const removeField = (__, state, { name }) => {
   const { [name]: removedField, ...fields } = state.fields;
   const { [name]: removedRegistration, ...registry } = state.registry;
   const formValid = isFormValid(fields);

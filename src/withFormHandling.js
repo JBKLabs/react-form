@@ -12,17 +12,22 @@ const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   const remainingPropsRef = useRef(remainingProps);
   remainingPropsRef.current = remainingProps;
 
-  const getFormField = useCallback((name) => {
-    const { value, error } = getField(name);
-    return { value, error };
-  }, [getField]);
+  const getFormField = useCallback(
+    (fieldName) => {
+      const { value, error } = getField(fieldName);
+      return { value, error };
+    },
+    [getField]
+  );
 
   const validateValue = useCallback(
     (value) => {
       if (typeof onFormChange === 'function') {
         onFormChange(value, remainingPropsRef.current, getFormField);
       } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach((cb) => cb(value, remainingPropsRef.current, getFormField));
+        onFormChange.forEach((cb) =>
+          cb(value, remainingPropsRef.current, getFormField)
+        );
       }
     },
     [remainingPropsRef, getFormField]
