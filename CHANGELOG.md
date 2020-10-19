@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- `useFormField` hook which returns the current value, error, and key for the input with the provided name ([#31](https://github.com/JBKLabs/react-form/issues/31))
+- `useFormField` hook which registers a new input and returns its current value, error, and key ([#31](https://github.com/JBKLabs/react-form/issues/31))
+- `useFormState` hook which subscribes to changes to an existing input and returns its current value, error, and key ([#31](https://github.com/JBKLabs/react-form/issues/31))
+- `useFormContext` hook which allows access to inner workings of the library ([#31](https://github.com/JBKLabs/react-form/issues/31))
+
+### Updated
+- Added `revalidateInputs` callback to `Form.onChange` and `Form.onSubmit` ([#31](https://github.com/JBKLabs/react-form/issues/31))
+- Added a `changedFields` [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) to `Form.onChange` ([#31](https://github.com/JBKLabs/react-form/issues/31))
 
 ### Fixed
 - issue where all inputs rerender anytime a single input value changes ([#31](https://github.com/JBKLabs/react-form/issues/31))
