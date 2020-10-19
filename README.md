@@ -45,6 +45,9 @@ This library exports the following:
 * `withFormHandling`
 * `Form`
 * `ValidationError`
+* `useFormField`
+* `useFormState`
+* `useFormContext`
 
 **withFormHandling(Component, onChange)**
 
@@ -98,11 +101,14 @@ export default withFormHandling(Input, (value) => {
 });
 ```
 
-In addition to `value`, the `onChange` callback is also provided all component props. This will allow you to achieve validation similar to the following:
+In addition to `value`, the `onChange` callback is also provided all component props and a method to get the current value and error for any existing form field. This will allow you to achieve validation similar to the following:
 
 ```jsx
-export default withFormHandling(Input, (value, { regex }) => {
-  if (regex && !value.match(regex)) {
+export default withFormHandling(Input, (value, props, getField) => {
+  const password = getField('password');
+  if (props.matchPassword && value !== password.value) {
+    throw new ValidationError('Does not match.')
+  } else if (props.regex && !value.match(props.regex)) {
     throw new ValidationError('Invalid pattern.')
   }
 });
@@ -168,7 +174,7 @@ All components wrapped by `withFormHandling` must be nested underneath one of `r
 
 Other than props supported by html's `form`, you can provide the following props to the `Form` component:
 
-**onSubmit({ formValid, values, resetInputs })**
+**onSubmit({ formValid, values, resetInputs, revalidateInputs })**
 
 This callback function will be called anytime a submit event is fired within the `Form` component.
 
@@ -177,6 +183,7 @@ This callback function will be called anytime a submit event is fired within the
 `formValid`: true or false based on all of the nested inputs' `error` props.  
 `values`: All form values; structure is based on the value of nested inputs' `name` props.  
 `resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
+`revalidateInputs`: A callback function which will allow you to revalidate one or more inputs. See the `Revalidating Inputs` section for more informtion.
 
 For example, the following form:
 
@@ -198,17 +205,20 @@ could call your provided `onSubmit` callback with:
     },
     value: 'example2'
   },
-  resetInputs: () => {...}
+  resetInputs: () => {...},
+  revalidateInputs: () => {...}
 }
 ```
 
-**onChange({ formValid, values })**
+**onChange({ formValid, values, changedFields, resetInputs, revalidateInputs })**
 
 This callback function will be called anytime a form value changes.
 
 `formValid`: true or false based on all of the nested inputs' `error` props.  
-`values`: All form values; structure is based on the value of nested inputs' `name` props.  
+`values`: All form values; structure is based on the value of nested inputs' `name` props.
+`changedFields`: A [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set) containing all field names whose state changed. See the `Reacting to field updates` for more information.
 `resetInputs`: A callback function which will allow you to reset one or more inputs back to their default values. See the `Resetting Inputs` section for more information.
+`revalidateInputs`: A callback function which will allow you to revalidate one or more inputs. See the `Revalidating Inputs` section for more informtion.
 
 An example of what this might look like can be seen in the `onSubmit` section.
 
@@ -266,6 +276,104 @@ Given the following form:
 * `resetInputs(['address.*'])` will reset the value of all inputs **except** `username` back to empty strings
 
 * `resetInputs()` which is the same as `resetInputs(['*'])` will reset all inputs back to their default values
+
+**Revalidating Inputs**
+
+In both of the provided `Form` lifecycle hooks, `onChange` and `onSubmit`, you are able to revalidate one or more inputs based of their current value via the provided `revalidateInputs(patterns)` function.
+
+`patterns`: An array of glob patterns which will be matched with your inputs' names.
+
+Given the following form:
+
+```jsx
+<Form
+  onChange={() => {...}}
+>
+  <Input name="username" defaultValue="johndoe34" >
+  <Input name="address.street" >
+  <Input name="address.city" >
+  <Input name="address.state" >
+  <Input name="address.zip" >
+</Form>
+```
+
+* `revalidateInputs(['address.state', 'address.city'])` will revalidate `address.state` and `address.city` based on their current value.
+
+* `revalidateInputs(['username'])` will revalidate `username` based off its current value, *not* its default value `johndoe34`.
+
+* `revalidateInputs(['address.*'])` will revalidate all inputs **except** `username`.
+
+* `revalidateInputs()` which is the same as `revalidateInputs(['*'])` will revalidate the entire form.
+
+**Reacting to field updates**
+
+In the `onChange` callback, you can perform any action based off which fields changed and triggered the change event via the provided `changedFields` [Set](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set). This is useful for scenarios where the validation of an input depends on the values of other fields within the form. For example:
+
+```jsx
+const Input = () => {...};
+const WrappedInput = withFormHandling(Input, (value, props, getField) => {
+  const { customValidation } = props;
+  if (customValidation) {
+    customValidation(value, props, getField);
+  }
+});
+
+const SignUpForm = () => {
+  const validateConfirmPassword = useCallback((value, props, getField) => {
+    const password = getField('password');
+    if (!!password.error) throw new ValidationError(password.error);
+    if (password.value !== value) throw new ValidationError('Does not match.');
+  }, []);
+
+  return (
+    <Form
+      onChange={({ changedFields, revalidateInputs }) => {
+        if (changedFields.has('password')) {
+          revalidateInputs(['confirmPassword']);
+        }
+      }}
+    >
+      <WrappedInput name="password" />
+      <WrappedInput
+        name="confirmPassword"
+        customValidation={validateConfirmPassword}
+      />
+    </Form>
+  );
+};
+```
+
+**useFormField(name, options)**
+
+As an alternative to `withFormHandling`, you can utilize `useFormField` to connect an input to the overall form. i.e.
+
+```jsx
+const MyInput = ({ name, defaultValue }) => {
+  const { value, setValue, error, key } = useFormField(name, {
+    defaultValue,
+    validateValue: (value) => value === 'valid' ? null : 'not valid'
+  });
+
+  return (
+    <>
+      <input
+        key={key}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      {error && <span>{error}</span>}
+    </>
+  );
+};
+```
+
+Options:
+* `defaultValue`- initial value of the form field. In addition, the `resetInputs` callback provided to `Form`'s `onSubmit` and `onChange` callback will reset the input back to the value declared as `defaultValue`
+* `validateValue(value)` - callback on value changes.
+  * returns a value `x` -> error set to `x`
+  * throws a `ValidationError(x)` -> error set to `x`
+  * throws a general `new Error()` => error set to the error object
+  * returns a falsy value -> error set to `null`
 
 
 ## Contributors

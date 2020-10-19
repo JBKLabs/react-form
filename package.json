@@ -6,8 +6,8 @@
   "react-native": "native/dist/index.js",
   "scripts": {
     "prepare": "npm run build",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
+    "build": "rollup -c --environment ENV:production",
+    "start": "rollup -c -w --environment ENV:development",
     "lint": "eslint src/* && prettier src/*",
     "lint:fix": "eslint src/* --fix && prettier src/* --write"
   },
@@ -53,6 +53,7 @@
     "rollup-plugin-sourcemaps": "0.4.2"
   },
   "dependencies": {
+    "eventemitter3": "^4.0.7",
     "minimatch": "3.0.4",
     "randomstring": "1.1.5"
   },

@@ -1,63 +1,49 @@
-import React, { useEffect, useContext, useCallback } from 'react';
+import React, { useCallback, useRef } from 'react';
 
-import FormContext from './FormContext';
+import useFormField from './useFormField';
+import useFormContext from './useFormContext';
 
-const withFormHandling = (FormInput, onFormChange = () => { }) => ({
+const withFormHandling = (FormInput, onFormChange = () => {}) => ({
   name,
   defaultValue = '',
   ...remainingProps
 }) => {
-  const {
-    values,
-    setValue,
-    errors,
-    setError,
-    keys,
-    inputProps,
-    setDefault,
-    removeKey
-  } = useContext(FormContext);
+  const { inputProps, getField } = useFormContext();
+  const remainingPropsRef = useRef(remainingProps);
+  remainingPropsRef.current = remainingProps;
 
-  const value = values[name] || '';
-  const error = errors[name] || null;
-  const key = keys[name] || name;
-
-  const setNamedValue = useCallback(
-    (nextValue) => {
-      setValue(name, nextValue);
+  const getFormField = useCallback(
+    (fieldName) => {
+      const { value, error } = getField(fieldName);
+      return { value, error };
     },
-    [name, setValue]
+    [getField]
   );
 
-  useEffect(() => {
-    setDefault(name, defaultValue);
-    return () => removeKey(name);
-  }, [name, defaultValue, setDefault, removeKey]);
-
-  useEffect(() => {
-    try {
+  const validateValue = useCallback(
+    (value) => {
       if (typeof onFormChange === 'function') {
-        onFormChange(value, remainingProps);
+        onFormChange(value, remainingPropsRef.current, getFormField);
       } else if (Array.isArray(onFormChange)) {
-        onFormChange.forEach(cb => cb(value, remainingProps));
+        onFormChange.forEach((cb) =>
+          cb(value, remainingPropsRef.current, getFormField)
+        );
       }
-      setError(name, null);
-    } catch (e) {
-      const message = e.displayText || e;
-      setError(name, message);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, inputProps]);
+    },
+    [remainingPropsRef, getFormField]
+  );
+
+  const field = useFormField(name, { defaultValue, validateValue });
 
   return (
     <FormInput
-      value={value}
-      error={error}
-      setValue={setNamedValue}
+      key={field.key}
+      value={field.value}
+      error={field.error}
+      setValue={field.setValue}
       name={name}
       inputProps={inputProps}
       {...remainingProps}
-      key={key}
     />
   );
 };

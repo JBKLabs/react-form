@@ -1,17 +1,17 @@
-import { useReducer, useMemo } from 'react';
+import { useReducer, useMemo, useRef } from 'react';
+import EventEmitter from 'eventemitter3';
 
 import * as reducers from './reducers';
 
 const useFormReducer = () => {
+  const emitter = useRef(new EventEmitter());
   const [form, dispatch] = useReducer(
-    (state, action) => reducers[action.type](state, action),
+    (state, action) => reducers[action.type](emitter.current, state, action),
     {
-      values: {},
-      defaults: {},
-      keys: {},
-      errors: {},
+      fields: {},
+      registry: {},
       formValid: false,
-      triggerOnChange: false
+      changedFields: new Set()
     }
   );
 
@@ -24,7 +24,7 @@ const useFormReducer = () => {
       }), {});
   }, [dispatch]);
 
-  return [form, dispatchHelper];
+  return [form, dispatchHelper, emitter.current];
 }
 
 export default useFormReducer;
